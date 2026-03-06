@@ -8,11 +8,11 @@
         <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>teccr</groupId>
-    <artifactId>JustDoItCloud</artifactId>
+    <groupId>webprog2</groupId>
+    <artifactId>SistemaPrestamoBibliotecaApp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>JustDoItCloudPresentacion</name>
-    <description>JustDoItCloudPresentacion</description>
+    <name>SistemaPrestamoBibliotecaApp</name>
+    <description>SistemaPrestamoBibliotecaApp</description>
     <url/>
     <licenses>
         <license/>
