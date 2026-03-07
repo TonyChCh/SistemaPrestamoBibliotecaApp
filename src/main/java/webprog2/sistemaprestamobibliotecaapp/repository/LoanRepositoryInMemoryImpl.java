@@ -1,10 +1,12 @@
 package webprog2.sistemaprestamobibliotecaapp.repository;
 
+import org.springframework.stereotype.Repository;
 import webprog2.sistemaprestamobibliotecaapp.data.Loan;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class LoanRepositoryInMemoryImpl implements LoanRepository {
 
     private final List<Loan> LoanList = new ArrayList<>();

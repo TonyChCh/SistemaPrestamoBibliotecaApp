@@ -13,13 +13,13 @@ public class Book {
     private final String title;
     private final Type type;
     @NotNull
-    private final Status status;
+    private boolean available;
 
     public Book(String title, Type type) {
         this.id = (long) cont++;
         this.title = title;
         this.type = type;
-        this.status = Status.AVAILABLE;
+        this.available = true;
     }
 
     public enum Status { INLOAN, AVAILABLE}

@@ -1,6 +1,7 @@
 package webprog2.sistemaprestamobibliotecaapp.repository;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Repository;
 import webprog2.sistemaprestamobibliotecaapp.data.Book;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * Simple in-memory implementation that stores tasks keyed by username.
  * For initial purposes it delegates to the seeded users in UserRepositoryImpl when possible.
  */
-
+@Repository
 public class BookRepositoryInMemoryImpl implements BookRepository {
 
     private final List<Book> BooksList = new ArrayList<>();

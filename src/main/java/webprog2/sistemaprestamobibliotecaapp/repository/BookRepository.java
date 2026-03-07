@@ -1,11 +1,13 @@
 package webprog2.sistemaprestamobibliotecaapp.repository;
 
+import org.springframework.stereotype.Repository;
 import webprog2.sistemaprestamobibliotecaapp.data.Book;
 import java.util.List;
 
 /**
  * Repository abstraction for task operations.
  */
+@Repository
 public interface BookRepository {
     /**
      * Return the book with the given id. If book doesn't exist, return null.

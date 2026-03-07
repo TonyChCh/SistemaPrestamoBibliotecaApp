@@ -12,7 +12,7 @@ public class Loan {
     private final List<Book> books;
     private final LocalDateTime loanTime;
     private LocalDateTime returnTime;
-    private final Status status;
+    private Status status;
 
     public Loan(Long userId, List<Book> books) {
         this.id = (long) cont++;
