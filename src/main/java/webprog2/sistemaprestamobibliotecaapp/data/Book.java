@@ -11,19 +11,19 @@ public class Book {
     private static int cont = 1;
     private final Long id;
     private final String title;
-    private final Type type;
+    private final Category category;
     @NotNull
     private boolean available;
 
-    public Book(String title, Type type) {
+    public Book(String title, Category category) {
         this.id = (long) cont++;
         this.title = title;
-        this.type = type;
+        this.category = category;
         this.available = true;
     }
 
     public enum Status { INLOAN, AVAILABLE}
 
-    public enum Type { NOVEL, STORY, SCIENCE, HISTORY, OTHER }
+    public enum Category { NOVEL, STORY, SCIENCE, HISTORY, OTHER }
 }
 

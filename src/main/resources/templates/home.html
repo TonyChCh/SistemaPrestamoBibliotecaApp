@@ -4,28 +4,77 @@
     <meta charset="UTF-8">
     <title>JustDoIt!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 
+    <style>
+        /* Estilos adicionales mínimos para tu formulario específico */
+        .login-form {
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
 
+        .login-form div {
+            margin-bottom: 20px;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light-gray);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-form button:hover {
+            background-color: #2980b9;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app-container">  <!-- ✅ CAMBIADO: container → app-container -->
 
     <!-- Left column -->
-    <aside class="sidebar">
-
-        <!-- Logo area -->
+    <aside class="sidebar">  <!-- ✅ ESTA SÍ EXISTE -->
         <div class="logo">
             <a th:href="@{/}"><img th:src="@{/images/JustDoIt.png}" alt="JustDoIt Logo" width="200" height="200"></a>
         </div>
-
-
     </aside>
 
     <!-- Right column -->
-    <main class="content">
+    <main class="main-content">  <!-- ✅ CAMBIADO: content → main-content -->
         <h1>Bienvenido a JustDoIt!</h1>
 
         <form th:action="@{/login}" method="post" class="login-form">
@@ -37,7 +86,6 @@
                 <button type="submit">Ingresar</button>
             </div>
         </form>
-
     </main>
 
 </div>

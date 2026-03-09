@@ -18,20 +18,18 @@ public class BookService {
 
     /**
      * Get a list of books by their title.
-     *
      * @param title the title to search for
      * @return List of Books matching the title
      */
-    List<Book> getBookByTitle(String title) {
-        return bookRepository.findBooksByTitle(title);
-    }
+    public List<Book> searchBookByTitle(String title) { return bookRepository.findBooksByTitle(title); }
     /**
-     * Get a list of books by their type.
-     * @param type the type to search for
-     * @return List of Books matching the type
+     * Get a list of books by their category.
+     * @param category the type to search for
+     * @return List of Books matching the category
      */
-    List<Book> getBookByType(String type) {
-        return bookRepository.findBookByType(type);
-    }
-
+    public List<Book> getBookByCategory(String category) { return bookRepository.findBookByCategory(category); }
+    /**
+     * @return List of all Books
+     */
+    public List<Book> getAllBooks() { return bookRepository.findAllBooks(); }
 }

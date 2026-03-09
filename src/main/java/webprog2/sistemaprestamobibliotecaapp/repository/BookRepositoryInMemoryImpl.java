@@ -19,9 +19,9 @@ public class BookRepositoryInMemoryImpl implements BookRepository {
     @PostConstruct
     public void init() {
         // Initialize default books list
-        Book book = new Book("El Quijote", Book.Type.NOVEL);
+        Book book = new Book("El Quijote", Book.Category.NOVEL);
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Type.NOVEL);
+        book = new Book("Cien Años de Soledad", Book.Category.STORY);
         BooksList.add(book);
     }
 
@@ -49,14 +49,18 @@ public class BookRepositoryInMemoryImpl implements BookRepository {
                 .toList();
     }
 
-    // Find books by type
-    // if no books of the given type are found, return an empty list (not null).
+    // Find books by category
+    // if no books of the given category are found, return an empty list (not null).
     @Override
-    public List<Book> findBookByType(String type) {
+    public List<Book> findBookByCategory(String category) {
         return BooksList.stream()
-                .filter(book -> book.getType().name().equalsIgnoreCase(type))
+                .filter(book -> book.getCategory().name().equalsIgnoreCase(category))
                 .toList();
     }
+
+    // Return a copy of the list to prevent external modifications
+    @Override
+    public List<Book> findAllBooks() { return new ArrayList<>(BooksList); }
 
     @Override
     public void saveBook(Book book) {

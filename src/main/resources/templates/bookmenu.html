@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Libros - SistemaBiblioteca</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="app-container">
+    <!-- SIDEBAR (izquierda) -->
+    <aside class="sidebar">
+        <div class="logo">
+            <a th:href="@{/}"><img th:src="@{/images/JustDoIt.png}" alt="JustDoIt Logo" width="200" height="200"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/bookmenu}"><i class="fas fa-book"></i> <span>Catálogo</span></a></li>
+                <li><a th:href="@{/loanhistory}"><i class="fas fa-history"></i> <span>Mi Historial</span></a></li>
+                <li><a th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL (derecha) -->
+    <div class="main-content">
+        <!-- TOP BAR (sobre el sidebar) -->
+        <div class="top-bar">
+            <div class="user-name">
+                <i class="fas fa-user-circle"></i>
+                <span th:text="${session.user != null ? session.user.userName : 'Invitado'}">Nombre Usuario</span>
+            </div>
+
+            <div class="search-container">
+                <form th:action="@{/booksearch}" method="get">
+                    <input type="text"
+                           name="query"
+                           placeholder="Buscar libros por título"
+                           th:value="${param.query != null ? param.query[0] : ''}">
+                    <button type="submit">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </form>
+            </div>
+
+            <div></div> <!-- Espaciador para mantener balance -->
+        </div>
+
+        <!-- CONTENIDO DEL CATÁLOGO -->
+        <div class="catalog-container">
+            <!-- Mensaje de bienvenida si hay búsqueda -->
+            <div th:if="${param.query != null}" class="welcome-message">
+                <i class="fas fa-search"></i>
+                Resultados para: "<span th:text="${param.query[0]}"></span>"
+            </div>
+
+            <!-- Iterar sobre las categorías de libros -->
+            <div th:each="cat : ${categories}" class="category-section">
+                <h2 th:text="${cat.name}">Categoría</h2>
+
+                <div class="scroll-container">
+                    <button class="scroll-btn left" th:id="'scroll-left-' + ${cat.name}"
+                            th:attr="onclick='scrollLeft(\'' + ${cat.name} + '\')'">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+
+                    <div class="books-scroll" th:id="'scroll-' + ${cat.name}">
+                        <!-- Filtrar libros por categoría usando el enum -->
+                        <div th:each="book : ${books.?[category.name() == #vars.cat.name()]}" class="book-card">
+
+                            <!-- Portada del libro (simulada) -->
+                            <div class="book-cover">
+                                <i class="fas fa-book"></i>
+                                <div>Libro</div>
+                            </div>
+
+                            <!-- Información del libro -->
+                            <div class="book-info">
+                                <div class="book-title" th:text="${book.title}">Título del Libro</div>
+                                <div class="book-category" th:text="${book.category.name()}">Categoría</div>
+
+                                <!-- Formulario para préstamo (solo si está disponible) -->
+                                <form class="loan-form" th:action="@{/loan/add-to-cart}" method="post">
+                                    <input type="hidden" name="bookId" th:value="${book.id}" />
+                                    <button type="submit"
+                                            class="loan-btn"
+                                            th:disabled="${!book.available}"
+                                            th:classappend="${!book.available} ? 'disabled' : ''">
+                                        <i class="fas" th:class="${book.available} ? 'fa-hand-holding' : 'fa-times-circle'"></i>
+                                        <span th:text="${book.available} ? 'Disponible' : 'No Disponible'"></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+<!--                        &lt;!&ndash; Mensaje si no hay libros en esta categoría &ndash;&gt;-->
+<!--                        <div th:if="${#lists.isEmpty(books.?[category.name() == Category.name()])}" class="no-results">-->
+<!--                            <i class="fas fa-book-open"></i>-->
+<!--                            <p>No hay libros disponibles en esta categoría</p>-->
+<!--                        </div>-->
+                    </div>
+
+                    <button class="scroll-btn right" th:id="'scroll-right-' + ${cat.name}"
+                            th:attr="onclick='scrollLeft(\'' + ${cat.name} + '\')'">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+<!--            &lt;!&ndash; Mensaje si no hay libros en absoluto &ndash;&gt;-->
+<!--            <div th:if="${#lists.isEmpty(books)}" class="no-results">-->
+<!--                <i class="fas fa-books"></i>-->
+<!--                <p>No hay libros disponibles en la biblioteca</p>-->
+<!--            </div>-->
+        </div>
+    </div>
+</div>
+
+<!--&lt;!&ndash; CARRITO FLOTANTE &ndash;&gt;-->
+<!--<div class="cart-floating">-->
+<!--    <button class="cart-toggle" onclick="toggleCart()">-->
+<!--        <i class="fas fa-shopping-cart"></i>-->
+<!--    </button>-->
+<!--    <span class="cart-badge" th:text="${session.cart != null ? session.cart.size() : 0}">0</span>-->
+
+<!--    <div class="cart-panel" id="cartPanel">-->
+<!--        <h3><i class="fas fa-shopping-cart"></i> Carrito de Préstamos</h3>-->
+
+<!--        <div class="cart-items" id="cartItems">-->
+<!--            &lt;!&ndash; Iterar sobre items en el carrito &ndash;&gt;-->
+<!--            <div th:each="item : ${session.cart != null ? session.cart : {}}" class="cart-item">-->
+<!--                <div class="cart-item-info">-->
+<!--                    <div class="cart-item-title" th:text="${item.bookTitle}">Título del Libro</div>-->
+<!--                    <div class="cart-item-author" th:text="${item.bookAuthor}">Autor</div>-->
+<!--                </div>-->
+<!--                <form th:action="@{/loan/remove-from-cart}" method="post" style="display: inline;">-->
+<!--                    <input type="hidden" name="bookId" th:value="${item.bookId}" />-->
+<!--                    <button type="submit" class="remove-item" title="Eliminar">-->
+<!--                        <i class="fas fa-times"></i>-->
+<!--                    </button>-->
+<!--                </form>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Mensaje si el carrito está vacío &ndash;&gt;-->
+<!--            <div th:if="${session.cart == null or #lists.isEmpty(session.cart)}" class="no-results" style="padding: 20px;">-->
+<!--                <i class="fas fa-shopping-cart"></i>-->
+<!--                <p>El carrito está vacío</p>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Botón de confirmar préstamo &ndash;&gt;-->
+<!--        <form th:action="@{/loan/confirm}" method="post">-->
+<!--            <button type="submit"-->
+<!--                    class="confirm-loan-btn"-->
+<!--                    th:disabled="${session.cart == null or #lists.isEmpty(session.cart)}">-->
+<!--                <i class="fas fa-check-circle"></i> Confirmar Préstamo-->
+<!--            </button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; SCRIPTS &ndash;&gt;-->
+<!--<script th:src="@{/js/biblioteca.js}"></script>-->
+<!--<script>-->
+<!--    // Funciones para scroll horizontal-->
+<!--    function scrollLeft(categoryId) {-->
+<!--        const container = document.getElementById('scroll-' + categoryId);-->
+<!--        if (container) {-->
+<!--            container.scrollBy({ left: -300, behavior: 'smooth' });-->
+<!--        }-->
+<!--    }-->
+
+<!--    function scrollRight(categoryId) {-->
+<!--        const container = document.getElementById('scroll-' + categoryId);-->
+<!--        if (container) {-->
+<!--            container.scrollBy({ left: 300, behavior: 'smooth' });-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Función para mostrar/ocultar carrito-->
+<!--    function toggleCart() {-->
+<!--        const panel = document.getElementById('cartPanel');-->
+<!--        panel.classList.toggle('show');-->
+<!--    }-->
+
+<!--    // Cerrar carrito al hacer click fuera-->
+<!--    document.addEventListener('click', function(event) {-->
+<!--        const cart = document.querySelector('.cart-floating');-->
+<!--        const panel = document.getElementById('cartPanel');-->
+
+<!--        if (!cart.contains(event.target) && panel.classList.contains('show')) {-->
+<!--            panel.classList.remove('show');-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+</body>
+</html>

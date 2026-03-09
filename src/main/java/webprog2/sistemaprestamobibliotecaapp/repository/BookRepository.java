@@ -18,9 +18,13 @@ public interface BookRepository {
      */
     List<Book> findBooksByTitle(String title);
     /**
-     * Return the list of books for a given author. If book doesn't exist, return empty list.
+     * Return the list of books for a given category. If book doesn't exist, return empty list.
      */
-    List<Book> findBookByType(String type);
+    List<Book> findBookByCategory(String type);
+    /**
+     * Return the list of all books. If no books exist, return empty list.
+     */
+    List<Book> findAllBooks();
     /**
      * Add a book to the book repository.
      */
