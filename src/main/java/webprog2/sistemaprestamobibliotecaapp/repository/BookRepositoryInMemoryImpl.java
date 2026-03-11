@@ -19,7 +19,23 @@ public class BookRepositoryInMemoryImpl implements BookRepository {
     @PostConstruct
     public void init() {
         // Initialize default books list
-        Book book = new Book("El Quijote", Book.Category.NOVEL);
+        Book book = new Book("El cien Quijote", Book.Category.NOVEL);
+        BooksList.add(book);
+        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("Cien Años de Soledad", Book.Category.STORY);
         BooksList.add(book);
         book = new Book("Cien Años de Soledad", Book.Category.STORY);
         BooksList.add(book);
@@ -41,11 +57,13 @@ public class BookRepositoryInMemoryImpl implements BookRepository {
     @Override
     public List<Book> findBooksByTitle(String title) {
         if (title == null || title.trim().isEmpty()) {
-            return null;
+            return new ArrayList<>(); // Return empty list for null or empty title
         }
         String trimmedTitle = title.trim().toLowerCase();
         return BooksList.stream()
-                .filter(book -> book.getTitle().toLowerCase().contains(trimmedTitle))
+                .filter(book -> book.getTitle().toLowerCase().endsWith(trimmedTitle) // matches end of title
+                        || book.getTitle().toLowerCase().contains(" " + trimmedTitle + " ") // matches middle of title
+                        || book.getTitle().toLowerCase().startsWith(trimmedTitle)) // matches start of title
                 .toList();
     }
 

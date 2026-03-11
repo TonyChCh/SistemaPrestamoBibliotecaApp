@@ -16,8 +16,8 @@
         </div>
         <nav>
             <ul>
-                <li><a th:href="@{/bookmenu}"><i class="fas fa-book"></i> <span>Catálogo</span></a></li>
-                <li><a th:href="@{/loanhistory}"><i class="fas fa-history"></i> <span>Mi Historial</span></a></li>
+                <li><a th:href="@{/user/bookmenu}"><i class="fas fa-book"></i> <span>Catálogo</span></a></li>
+                <li><a th:href="@{/user/loanhistory}"><i class="fas fa-history"></i> <span>Mi Historial</span></a></li>
                 <li><a th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span></a></li>
             </ul>
         </nav>
@@ -33,7 +33,7 @@
             </div>
 
             <div class="search-container">
-                <form th:action="@{/booksearch}" method="get">
+                <form th:action="@{/user/searchbook}" method="post">
                     <input type="text"
                            name="query"
                            placeholder="Buscar libros por título"
@@ -54,14 +54,14 @@
                 <i class="fas fa-search"></i>
                 Resultados para: "<span th:text="${param.query[0]}"></span>"
             </div>
-
             <!-- Iterar sobre las categorías de libros -->
             <div th:each="cat : ${categories}" class="category-section">
                 <h2 th:text="${cat.name}">Categoría</h2>
 
                 <div class="scroll-container">
-                    <button class="scroll-btn left" th:id="'scroll-left-' + ${cat.name}"
-                            th:attr="onclick='scrollLeft(\'' + ${cat.name} + '\')'">
+                    <button class="scroll-btn left"
+                            th:id="'scroll-left-' + ${cat.name}"
+                            th:data-category="${cat.name}">
                         <i class="fas fa-chevron-left"></i>
                     </button>
 
@@ -94,105 +94,123 @@
                             </div>
                         </div>
 
-<!--                        &lt;!&ndash; Mensaje si no hay libros en esta categoría &ndash;&gt;-->
-<!--                        <div th:if="${#lists.isEmpty(books.?[category.name() == Category.name()])}" class="no-results">-->
-<!--                            <i class="fas fa-book-open"></i>-->
-<!--                            <p>No hay libros disponibles en esta categoría</p>-->
-<!--                        </div>-->
+                        <!-- Mensaje si no hay libros en esta categoría -->
+                        <div th:if="${#lists.isEmpty(books.?[category.name() == #vars.cat.name()])}" class="no-results">
+                            <i class="fas fa-book-open"></i>
+                            <p>No hay libros disponibles en esta categoría</p>
+                        </div>
                     </div>
 
-                    <button class="scroll-btn right" th:id="'scroll-right-' + ${cat.name}"
-                            th:attr="onclick='scrollLeft(\'' + ${cat.name} + '\')'">
+                    <button class="scroll-btn right"
+                            th:id="'scroll-right-' + ${cat.name}"
+                            th:data-category="${cat.name}">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
             </div>
 
-<!--            &lt;!&ndash; Mensaje si no hay libros en absoluto &ndash;&gt;-->
-<!--            <div th:if="${#lists.isEmpty(books)}" class="no-results">-->
-<!--                <i class="fas fa-books"></i>-->
-<!--                <p>No hay libros disponibles en la biblioteca</p>-->
-<!--            </div>-->
+            <!-- Mensaje si no hay libros en absoluto -->
+            <div th:if="${#lists.isEmpty(books)}" class="no-results">
+                <i class="fas fa-books"></i>
+                No hay libros <span th:text="${param.query == null} ?
+                'disponibles en la biblioteca' : 'que coincidan con la búsqueda'"></span>
+            </div>
         </div>
     </div>
 </div>
 
-<!--&lt;!&ndash; CARRITO FLOTANTE &ndash;&gt;-->
-<!--<div class="cart-floating">-->
-<!--    <button class="cart-toggle" onclick="toggleCart()">-->
-<!--        <i class="fas fa-shopping-cart"></i>-->
-<!--    </button>-->
-<!--    <span class="cart-badge" th:text="${session.cart != null ? session.cart.size() : 0}">0</span>-->
+<!-- CARRITO FLOTANTE -->
+<div class="cart-floating">
+    <button class="cart-toggle" onclick="toggleCart()">
+        <i class="fas fa-shopping-cart"></i>
+    </button>
+    <span class="cart-badge" th:text="${session.cart != null ? session.cart.size() : 0}">0</span>
 
-<!--    <div class="cart-panel" id="cartPanel">-->
-<!--        <h3><i class="fas fa-shopping-cart"></i> Carrito de Préstamos</h3>-->
+    <div class="cart-panel" id="cartPanel">
+        <h3><i class="fas fa-shopping-cart"></i> Carrito de Préstamos</h3>
 
-<!--        <div class="cart-items" id="cartItems">-->
-<!--            &lt;!&ndash; Iterar sobre items en el carrito &ndash;&gt;-->
-<!--            <div th:each="item : ${session.cart != null ? session.cart : {}}" class="cart-item">-->
-<!--                <div class="cart-item-info">-->
-<!--                    <div class="cart-item-title" th:text="${item.bookTitle}">Título del Libro</div>-->
-<!--                    <div class="cart-item-author" th:text="${item.bookAuthor}">Autor</div>-->
-<!--                </div>-->
-<!--                <form th:action="@{/loan/remove-from-cart}" method="post" style="display: inline;">-->
-<!--                    <input type="hidden" name="bookId" th:value="${item.bookId}" />-->
-<!--                    <button type="submit" class="remove-item" title="Eliminar">-->
-<!--                        <i class="fas fa-times"></i>-->
-<!--                    </button>-->
-<!--                </form>-->
-<!--            </div>-->
+        <div class="cart-items" id="cartItems">
+            <!-- Iterar sobre items en el carrito -->
+            <div th:each="item : ${session.cart != null ? session.cart : {}}" class="cart-item">
+                <div class="cart-item-info">
+                    <div class="cart-item-title" th:text="${item.title}">Título del Libro</div>
+                </div>
+                <form th:action="@{/loan/remove-from-cart}" method="post" style="display: inline;">
+                    <input type="hidden" name="bookId" th:value="${item.id}" />
+                    <button type="submit" class="remove-item" title="Eliminar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </form>
+            </div>
 
-<!--            &lt;!&ndash; Mensaje si el carrito está vacío &ndash;&gt;-->
-<!--            <div th:if="${session.cart == null or #lists.isEmpty(session.cart)}" class="no-results" style="padding: 20px;">-->
-<!--                <i class="fas fa-shopping-cart"></i>-->
-<!--                <p>El carrito está vacío</p>-->
-<!--            </div>-->
-<!--        </div>-->
+            <!-- Mensaje si el carrito está vacío -->
+            <div th:if="${session.cart == null or #lists.isEmpty(session.cart)}" class="no-results" style="padding: 20px;">
+                <i class="fas fa-shopping-cart"></i>
+                <p>El carrito está vacío</p>
+            </div>
+        </div>
 
-<!--        &lt;!&ndash; Botón de confirmar préstamo &ndash;&gt;-->
-<!--        <form th:action="@{/loan/confirm}" method="post">-->
-<!--            <button type="submit"-->
-<!--                    class="confirm-loan-btn"-->
-<!--                    th:disabled="${session.cart == null or #lists.isEmpty(session.cart)}">-->
-<!--                <i class="fas fa-check-circle"></i> Confirmar Préstamo-->
-<!--            </button>-->
-<!--        </form>-->
-<!--    </div>-->
-<!--</div>-->
+        <!-- Botón de confirmar préstamo -->
+        <form th:action="@{/loan/confirm}" method="post">
+            <button type="submit"
+                    class="confirm-loan-btn"
+                    th:disabled="${session.cart == null or #lists.isEmpty(session.cart)}">
+                <i class="fas fa-check-circle"></i> Confirmar Préstamo
+            </button>
+        </form>
+    </div>
+</div>
 
-<!--&lt;!&ndash; SCRIPTS &ndash;&gt;-->
-<!--<script th:src="@{/js/biblioteca.js}"></script>-->
-<!--<script>-->
-<!--    // Funciones para scroll horizontal-->
-<!--    function scrollLeft(categoryId) {-->
-<!--        const container = document.getElementById('scroll-' + categoryId);-->
-<!--        if (container) {-->
-<!--            container.scrollBy({ left: -300, behavior: 'smooth' });-->
-<!--        }-->
-<!--    }-->
+<!-- SCRIPTS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
 
-<!--    function scrollRight(categoryId) {-->
-<!--        const container = document.getElementById('scroll-' + categoryId);-->
-<!--        if (container) {-->
-<!--            container.scrollBy({ left: 300, behavior: 'smooth' });-->
-<!--        }-->
-<!--    }-->
+        // Botones izquierdos
+        document.querySelectorAll('.scroll-btn.left').forEach(button => {
 
-<!--    // Función para mostrar/ocultar carrito-->
-<!--    function toggleCart() {-->
-<!--        const panel = document.getElementById('cartPanel');-->
-<!--        panel.classList.toggle('show');-->
-<!--    }-->
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const categoryId = this.dataset.category;
 
-<!--    // Cerrar carrito al hacer click fuera-->
-<!--    document.addEventListener('click', function(event) {-->
-<!--        const cart = document.querySelector('.cart-floating');-->
-<!--        const panel = document.getElementById('cartPanel');-->
+                const container = document.getElementById('scroll-' + categoryId);
 
-<!--        if (!cart.contains(event.target) && panel.classList.contains('show')) {-->
-<!--            panel.classList.remove('show');-->
-<!--        }-->
-<!--    });-->
-<!--</script>-->
+                if (container) {
+                    container.scrollBy({ left: -300, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Botones derechos
+        document.querySelectorAll('.scroll-btn.right').forEach(button => {
+
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const categoryId = this.dataset.category;
+
+                const container = document.getElementById('scroll-' + categoryId);
+
+                if (container) {
+                    container.scrollBy({ left: 300, behavior: 'smooth' });
+                }
+            });
+        });
+    });
+
+    // Función para mostrar/ocultar carrito
+    function toggleCart() {
+        const panel = document.getElementById('cartPanel');
+        panel.classList.toggle('show');
+    }
+
+    // Cerrar carrito al hacer click fuera
+    document.addEventListener('click', function(event) {
+        const cart = document.querySelector('.cart-floating');
+        const panel = document.getElementById('cartPanel');
+
+        if (!cart.contains(event.target) && panel.classList.contains('show')) {
+            panel.classList.remove('show');
+        }
+    });
+</script>
 </body>
 </html>
