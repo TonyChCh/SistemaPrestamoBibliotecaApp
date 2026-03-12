@@ -17,6 +17,12 @@ public class BookService {
     public BookService(BookRepository bookRepository) { this.bookRepository = bookRepository; }
 
     /**
+     * Get a book by its id.
+     * @param id the id of the book to retrieve
+     * @return Book with the given id, or null if not found
+     */
+    public Book getBookById(Long id) { return bookRepository.findBookById(id); }
+    /**
      * Get a list of books by their title.
      * @param title the title to search for
      * @return List of Books matching the title

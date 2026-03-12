@@ -7,6 +7,26 @@
     --dark-gray: #7f8c8d;
     --white: #ffffff;
     --shadow: 0 2px 10px rgba(0,0,0,0.1);
+    scroll-behavior:auto;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    padding: 15px 20px;
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    box-shadow: var(--shadow);
+}
+
+.success-message i {
+    font-size: 24px;
+    color: #28a745;
 }
 
 * {

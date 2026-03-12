@@ -33,7 +33,7 @@
             </div>
 
             <div class="search-container">
-                <form th:action="@{/user/searchbook}" method="post">
+                <form th:action="@{/user/searchbook}" method="get">
                     <input type="text"
                            name="query"
                            placeholder="Buscar libros por título"
@@ -46,7 +46,11 @@
 
             <div></div> <!-- Espaciador para mantener balance -->
         </div>
-
+        <!-- Mensaje de éxito -->
+        <div th:if="${successMessage}" class="success-message">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${successMessage}">Mensaje de éxito</span>
+        </div>
         <!-- CONTENIDO DEL CATÁLOGO -->
         <div class="catalog-container">
             <!-- Mensaje de bienvenida si hay búsqueda -->
@@ -81,7 +85,7 @@
                                 <div class="book-category" th:text="${book.category.name()}">Categoría</div>
 
                                 <!-- Formulario para préstamo (solo si está disponible) -->
-                                <form class="loan-form" th:action="@{/loan/add-to-cart}" method="post">
+                                <form class="loan-form" th:action="@{/user/loan/add-to-cart}" method="post">
                                     <input type="hidden" name="bookId" th:value="${book.id}" />
                                     <button type="submit"
                                             class="loan-btn"
@@ -135,7 +139,7 @@
                 <div class="cart-item-info">
                     <div class="cart-item-title" th:text="${item.title}">Título del Libro</div>
                 </div>
-                <form th:action="@{/loan/remove-from-cart}" method="post" style="display: inline;">
+                <form class="loan-form" th:action="@{/user/loan/remove-from-cart}" method="post" style="display: inline;">
                     <input type="hidden" name="bookId" th:value="${item.id}" />
                     <button type="submit" class="remove-item" title="Eliminar">
                         <i class="fas fa-times"></i>
@@ -151,7 +155,7 @@
         </div>
 
         <!-- Botón de confirmar préstamo -->
-        <form th:action="@{/loan/confirm}" method="post">
+        <form th:action="@{/user/loan/confirm}" method="post">
             <button type="submit"
                     class="confirm-loan-btn"
                     th:disabled="${session.cart == null or #lists.isEmpty(session.cart)}">
@@ -162,55 +166,7 @@
 </div>
 
 <!-- SCRIPTS -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+<script th:src="@{/js/script.js}"></script>
 
-        // Botones izquierdos
-        document.querySelectorAll('.scroll-btn.left').forEach(button => {
-
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const categoryId = this.dataset.category;
-
-                const container = document.getElementById('scroll-' + categoryId);
-
-                if (container) {
-                    container.scrollBy({ left: -300, behavior: 'smooth' });
-                }
-            });
-        });
-
-        // Botones derechos
-        document.querySelectorAll('.scroll-btn.right').forEach(button => {
-
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const categoryId = this.dataset.category;
-
-                const container = document.getElementById('scroll-' + categoryId);
-
-                if (container) {
-                    container.scrollBy({ left: 300, behavior: 'smooth' });
-                }
-            });
-        });
-    });
-
-    // Función para mostrar/ocultar carrito
-    function toggleCart() {
-        const panel = document.getElementById('cartPanel');
-        panel.classList.toggle('show');
-    }
-
-    // Cerrar carrito al hacer click fuera
-    document.addEventListener('click', function(event) {
-        const cart = document.querySelector('.cart-floating');
-        const panel = document.getElementById('cartPanel');
-
-        if (!cart.contains(event.target) && panel.classList.contains('show')) {
-            panel.classList.remove('show');
-        }
-    });
-</script>
 </body>
 </html>

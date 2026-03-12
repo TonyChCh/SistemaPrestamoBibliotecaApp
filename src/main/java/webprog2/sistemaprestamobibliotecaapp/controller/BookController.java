@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequestMapping("/user")
-@SessionAttributes({"user", "cart"})
+@SessionAttributes("user")
 public class BookController {
 
     private final BookService bookService;
@@ -33,16 +33,11 @@ public class BookController {
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("books", books);
         log.info("Books added to model: '{}', CONTENT: '{}'", books.size(), books);
-        // Temporal testing
-        List<Book> cart = books.stream()
-                .filter(book -> book.getId() > 5L)
-                .toList();
-        model.addAttribute("cart", cart);
         return "bookmenu";
     }
 
     // Implement for Search Book by Title
-    @PostMapping("/searchbook")
+    @GetMapping("/searchbook")
     public String searchBooks(@RequestParam("query") String query, Model model) {
         List<Book> searchResults = bookService.searchBookByTitle(query);
         if (query.isEmpty()) {

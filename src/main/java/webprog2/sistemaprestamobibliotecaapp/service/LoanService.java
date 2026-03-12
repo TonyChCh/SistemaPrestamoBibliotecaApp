@@ -1,10 +1,12 @@
 package webprog2.sistemaprestamobibliotecaapp.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import webprog2.sistemaprestamobibliotecaapp.data.Book;
 import webprog2.sistemaprestamobibliotecaapp.data.Loan;
 import webprog2.sistemaprestamobibliotecaapp.data.User;
 import webprog2.sistemaprestamobibliotecaapp.repository.LoanRepository;
+import webprog2.sistemaprestamobibliotecaapp.repository.BookRepository;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +17,13 @@ import java.util.Optional;
 public class LoanService {
 
     private final LoanRepository loanRepository;
+    private final BookRepository bookRepository;
 
     // Constructor injection of UserRepository
-    public LoanService(LoanRepository loanRepository) { this.loanRepository = loanRepository; }
+    public LoanService(LoanRepository loanRepository, BookRepository bookRepository) {
+        this.loanRepository = loanRepository;
+        this.bookRepository = bookRepository;
+    }
 
     /**
      * Get all loans for a given user.
@@ -28,6 +34,49 @@ public class LoanService {
     public Optional<List<Loan>> getLoansForUser(User user) {
         return loanRepository.findLoanByUserId(user.getId());
     }
+
+    /**
+     * Add a book to the user's cart if it's available. This method checks the availability of the book
+     * before adding it to the cart and updates the availability status of the book accordingly.
+     *
+     * @param bookId the id of the book to add to the cart
+     * @param cart   the current list of books in the user's cart
+     * @return true if the book was successfully added to the cart, false otherwise
+     */
+    public boolean addBookToCart(long bookId, @ModelAttribute("cart") List<Book> cart) {
+        Book book = bookRepository.findBookById(bookId);
+        if (book != null && book.isAvailable()) {
+            book.setAvailable(false);
+            cart.add(book);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Remove a book from the user's cart and update its availability status.
+     *
+     * @param bookId the id of the book to remove from the cart
+     * @param cart   the current list of books in the user's cart
+     * @return true if the book was successfully removed from the cart, false otherwise
+     */
+    public boolean removeBookFromCart(long bookId, @ModelAttribute("cart") List<Book> cart) {
+        // Find the book in the cart
+        Book bookInCart = cart.stream()
+                .filter(book -> book.getId().equals(bookId))
+                .findFirst()
+                .orElse(null);
+        // Remove the book from the cart
+        if (bookInCart != null) {
+            bookInCart.setAvailable(true);
+            cart.remove(bookInCart);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Create a new loan for a user with the given list of books.
      * This method checks if the books are available before creating the loan.
@@ -36,10 +85,8 @@ public class LoanService {
      */
     public void loanBookToUser(User user, List<Book> books) {
         Loan loan = new Loan(user.getId(), books);
-        // Check if any of the books are not available before saving the loan
-        if (books.stream().anyMatch(book -> !book.isAvailable())){
-            throw new IllegalStateException("One or more books are not available for loan.");
-        }
+        // No available's book can't get into loan cart, the controller guarantees it
+
         // Update the availability of the books
         books.forEach(book -> book.setAvailable(false));
         // Save the loan to the repository
