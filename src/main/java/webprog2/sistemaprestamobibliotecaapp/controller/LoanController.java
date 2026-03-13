@@ -33,17 +33,7 @@ public class LoanController {
 
     @GetMapping("loanhistory")
     public String showLoanHistory(Model model, @ModelAttribute("user") User user) {
-        List<Loan> loanHistory = new ArrayList<>(loanService.getLoansForUser(user));
-
-        // Ordenar para mejor vista, orden: RETURNED > ACTIVE > fecha_mas_vieja > fecha_mas_reciente
-        loanHistory.sort(Comparator
-                        // Por estado (RETURNED primero, luego ACTIVE)
-                        .comparing((Loan loan) -> loan.getReturnTime() != null ? 0 : 1)
-                        // Luego por fecha (ascendente)
-                        .thenComparing(Loan::getLoanTime)
-        );
-        // Invertir el orden, los mas viejos aparecen abajo, los PENDIENTES se muestran primero
-        Collections.reverse(loanHistory);
+        List<Loan> loanHistory = loanService.getLoansForUser(user);
 
         if (!loanHistory.isEmpty()) {
             log.info("Loan history for user {}: {}", user.getUserName(), loanHistory);

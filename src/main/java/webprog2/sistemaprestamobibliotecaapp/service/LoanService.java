@@ -9,6 +9,9 @@ import webprog2.sistemaprestamobibliotecaapp.repository.LoanRepository;
 import webprog2.sistemaprestamobibliotecaapp.repository.BookRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -33,7 +36,17 @@ public class LoanService {
      * @return Optional containing a list of Loans if found
      */
     public List<Loan> getLoansForUser(User user) {
-        return loanRepository.findLoanByUserId(user.getId());
+        List<Loan> loanHistory = new ArrayList<>(loanRepository.findLoanByUserId(user.getId()));
+        // Ordenar para mejor vista, orden: RETURNED > ACTIVE > fecha_mas_vieja > fecha_mas_reciente
+        loanHistory.sort(Comparator
+                // Por estado (RETURNED primero, luego ACTIVE)
+                .comparing((Loan loan) -> loan.getReturnTime() != null ? 0 : 1)
+                // Luego por fecha (ascendente)
+                .thenComparing(Loan::getLoanTime)
+        );
+        // Invertir el orden, los mas viejos aparecen abajo, los PENDIENTES se muestran primero
+        Collections.reverse(loanHistory);
+        return loanHistory;
     }
 
     /**
