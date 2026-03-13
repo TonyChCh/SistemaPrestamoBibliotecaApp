@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 import webprog2.sistemaprestamobibliotecaapp.data.Loan;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class LoanRepositoryInMemoryImpl implements LoanRepository {
@@ -24,14 +23,13 @@ public class LoanRepositoryInMemoryImpl implements LoanRepository {
     }
 
     @Override
-    public Optional<List<Loan>> findLoanByUserId(Long userId) {
+    public List<Loan> findLoanByUserId(Long userId) {
         if (userId == null) {
-            return Optional.empty();
+            return new ArrayList<>(); // Return empty list for null userId
         }
-        List<Loan> userLoans = LoanList.stream()
+        return LoanList.stream()
                 .filter(loan -> loan.getUserId().equals(userId))
                 .toList();
-        return Optional.of(userLoans);
     }
 
     @Override

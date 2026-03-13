@@ -7,8 +7,9 @@ import webprog2.sistemaprestamobibliotecaapp.data.Loan;
 import webprog2.sistemaprestamobibliotecaapp.data.User;
 import webprog2.sistemaprestamobibliotecaapp.repository.LoanRepository;
 import webprog2.sistemaprestamobibliotecaapp.repository.BookRepository;
+
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service responsible for loan-related business logic.
@@ -31,7 +32,7 @@ public class LoanService {
      * @param user the user to get loans for
      * @return Optional containing a list of Loans if found
      */
-    public Optional<List<Loan>> getLoansForUser(User user) {
+    public List<Loan> getLoansForUser(User user) {
         return loanRepository.findLoanByUserId(user.getId());
     }
 
@@ -81,12 +82,13 @@ public class LoanService {
      * Create a new loan for a user with the given list of books.
      * This method checks if the books are available before creating the loan.
      * @param user  the user to loan the books to
-     * @param books the list of books to loan
+     * @param cart the list of books to loan
      */
-    public void loanBookToUser(User user, List<Book> books) {
+    public void loanBookToUser(User user, List<Book> cart) {
+        // Create a copy of the cart to avoid modifying the original list outside this method
+        List<Book> books = cart.stream().toList();
         Loan loan = new Loan(user.getId(), books);
         // No available's book can't get into loan cart, the controller guarantees it
-
         // Update the availability of the books
         books.forEach(book -> book.setAvailable(false));
         // Save the loan to the repository
@@ -100,9 +102,12 @@ public class LoanService {
      public void returnLoan(Long LoanId) {
         Loan loan = loanRepository.findLoanByLoanId(LoanId);
         if (loan != null) {
+            // If the loan is already returned, do nothing
+            if (loan.getStatus() == Loan.Status.RETURNED) { return; }
             // Update the availability of the books in the loan
             loan.getBooks().forEach(book -> book.setAvailable(true));
             // Change the status of the loan to returned
+            loan.setReturnTime(LocalDateTime.now());
             loan.setStatus(Loan.Status.RETURNED);
         } else {
             throw new IllegalArgumentException("Loan with id " + LoanId + " not found.");

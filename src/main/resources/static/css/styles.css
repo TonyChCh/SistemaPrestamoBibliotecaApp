@@ -288,6 +288,11 @@ body {
     border: 1px solid var(--light-gray);
 }
 
+.book-card.loan {
+    min-width: 160px;
+    width: 160px;
+}
+
 .book-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 20px rgba(0,0,0,0.15);
@@ -304,6 +309,10 @@ body {
     text-align: center;
     padding: 10px;
     border-bottom: 1px solid #ddd;
+}
+
+.book-cover.loan {
+    height: 100px;
 }
 
 .book-cover i {
@@ -480,6 +489,157 @@ body {
 .confirm-loan-btn:disabled {
     background-color: #bdc3c7;
     cursor: not-allowed;
+}
+
+/* ===== HISTORIAL DE PRÉSTAMOS ===== */
+.loan-history-container {
+    padding: 30px;
+}
+
+.loan-history-container h1 {
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    border-bottom: 3px solid var(--secondary-color);
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* Estilo de tabla mejorado */
+.loan-history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;  /* ← SEPARA LAS FILAS VERTICALMENTE */
+    margin: 0;
+}
+
+/* Cabecera */
+.loan-history-table thead tr {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.loan-history-table th {
+    padding: 15px 10px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+/* Bordes redondeados en cabecera */
+.loan-history-table th:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.loan-history-table th:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Filas de datos */
+.loan-history-table tbody tr {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.loan-history-table tbody tr:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+/* Celdas de datos */
+.loan-history-table td {
+    padding: 15px 10px;
+    text-align: center;
+    border: none;
+    font-size: 0.95rem;
+}
+
+/* Bordes redondeados en celdas */
+.loan-history-table tbody tr td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.loan-history-table tbody tr td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Borde izquierdo de color (más grueso) */
+.loan-history-table tbody tr td:first-child {
+    border-left: 8px solid transparent;  /* ← Borde más grueso */
+}
+
+/* Colores según estado */
+.loan-history-table tbody tr.active-loan td:first-child {
+    border-left-color: #f0ad4e;  /* Naranja */
+}
+
+.loan-history-table tbody tr.returned-loan td:first-child {
+    border-left-color: #00cc00;  /* Verde */
+}
+
+/* Botón de detalle */
+.loan-history-table .btn-primary {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 15px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.loan-history-table .btn-primary:hover {
+    background-color: #2980b9;
+}
+
+/* Mensaje cuando no hay préstamos */
+.loan-history-container .no-results {
+    text-align: center;
+    padding: 50px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    color: var(--dark-gray);
+}
+
+.loan-history-container .no-results i {
+    font-size: 50px;
+    color: var(--light-gray);
+    margin-bottom: 20px;
+}
+
+/* Modal de detalles */
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Para el contenedor del modal */
+.modal-body .scroll-container {
+    width: 100%;
+    overflow-x: auto;  /* ← Habilita scroll horizontal */
+    position: relative;
+    padding: 5px 0;
+}
+
+/* Para la fila de libros */
+.modal-body .books-scroll {
+    display: flex;
+    gap: 15px;
+    padding: 10px 5px;
+    width: max-content;  /* ← Se expande según contenido */
+    min-width: 100%;
 }
 
 /* ===== RESPONSIVE ===== */

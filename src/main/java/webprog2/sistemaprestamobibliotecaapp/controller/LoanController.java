@@ -13,8 +13,7 @@ import webprog2.sistemaprestamobibliotecaapp.data.Loan;
 import webprog2.sistemaprestamobibliotecaapp.data.User;
 import webprog2.sistemaprestamobibliotecaapp.service.LoanService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -30,6 +29,29 @@ public class LoanController {
     @ModelAttribute("cart")
     public List<Book> createCart() {
         return new ArrayList<>();  // Carrito vacío al inicio
+    }
+
+    @GetMapping("loanhistory")
+    public String showLoanHistory(Model model, @ModelAttribute("user") User user) {
+        List<Loan> loanHistory = new ArrayList<>(loanService.getLoansForUser(user));
+
+        // Ordenar para mejor vista, orden: RETURNED > ACTIVE > fecha_mas_vieja > fecha_mas_reciente
+        loanHistory.sort(Comparator
+                        // Por estado (RETURNED primero, luego ACTIVE)
+                        .comparing((Loan loan) -> loan.getReturnTime() != null ? 0 : 1)
+                        // Luego por fecha (ascendente)
+                        .thenComparing(Loan::getLoanTime)
+        );
+        // Invertir el orden, los mas viejos aparecen abajo, los PENDIENTES se muestran primero
+        Collections.reverse(loanHistory);
+
+        if (!loanHistory.isEmpty()) {
+            log.info("Loan history for user {}: {}", user.getUserName(), loanHistory);
+        } else {
+            log.info("No loan history found for user {}.", user.getUserName());
+        }
+        model.addAttribute("loanHistory", loanHistory);
+        return "loanhistory";
     }
 
     @PostMapping("/add-to-cart")
@@ -59,6 +81,7 @@ public class LoanController {
         int bookCount = cart.size();
         loanService.loanBookToUser(user, cart);
         log.info("Loan confirmed for user {} with {} books.", user.getUserName(), bookCount);
+        List<Loan> loanHistory = loanService.getLoansForUser(user);
         // Guardar mensaje de éxito antes de limpiar
         redirectAttributes.addFlashAttribute("successMessage",
                 "¡Préstamo confirmado exitosamente! Se prestaron " + bookCount + " libros.");
@@ -66,6 +89,17 @@ public class LoanController {
         cart.clear();
         return "redirect:/user/bookmenu";
     }
+
+    @PostMapping("/return")
+    public String returnLoan(@RequestParam("loanId") long loanId,
+                             RedirectAttributes redirectAttributes){
+        loanService.returnLoan(loanId);
+        log.info("Loan with id: {} was returned", loanId);
+        redirectAttributes.addFlashAttribute("successMessage",
+                "¡Préstamo devuelto exitosamente!");
+        return "redirect:/user/loan/loanhistory";
+    }
+
 
 
 }

@@ -1,15 +1,10 @@
 package webprog2.sistemaprestamobibliotecaapp.controller;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.tags.Param;
 import webprog2.sistemaprestamobibliotecaapp.data.Book;
-import webprog2.sistemaprestamobibliotecaapp.data.User;
 import webprog2.sistemaprestamobibliotecaapp.service.BookService;
 import java.util.List;
 
@@ -25,7 +20,7 @@ public class BookController {
     public BookController(BookService bookService) { this.bookService = bookService; }
 
     @GetMapping("/bookmenu")
-    public String showBookMenu(Model model, HttpSession session) {
+    public String showBookMenu(Model model) {
         // Add categories to the model for the dropdown
         model.addAttribute("categories", Book.Category.values());
         log.info("Categories added to model: {}", List.of(Book.Category.values()));

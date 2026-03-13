@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            const categoryId = this.dataset.category;
+            const categoryName = this.dataset.category;
 
-            const container = document.getElementById('scroll-' + categoryId);
+            const container = document.getElementById('scroll-' + categoryName);
 
             if (container) {
                 container.scrollBy({ left: -300, behavior: 'smooth' });
@@ -18,9 +18,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            const categoryId = this.dataset.category;
+            const categoryName = this.dataset.category;
 
-            const container = document.getElementById('scroll-' + categoryId);
+            const container = document.getElementById('scroll-' + categoryName);
 
             if (container) {
                 container.scrollBy({ left: 300, behavior: 'smooth' });
@@ -59,4 +59,18 @@ window.addEventListener('load', function() {
         window.scrollTo(0, parseInt(scrollPos));
         sessionStorage.removeItem('scrollPos');
     }
+});
+
+// Activar scroll horizontal con la rueda del mouse en el modal de detalle de prestamos
+document.addEventListener('DOMContentLoaded', function() {
+    // Seleccionar todos los contenedores de libros en modales
+    document.querySelectorAll('.modal-body .books-scroll').forEach(container => {
+        container.addEventListener('wheel', function(e) {
+            if (e.deltaY !== 0) {
+                e.preventDefault();  // Evitar scroll vertical
+                // Scroll horizontal con la rueda
+                this.scrollLeft += e.deltaY * 0.5;  // Ajusta la velocidad
+            }
+        });
+    });
 });

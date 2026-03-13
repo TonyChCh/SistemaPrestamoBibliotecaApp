@@ -1,4 +1,4 @@
-package teccr.justdoitcloud.interceptor;
+package webprog2.sistemaprestamobibliotecaapp.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
