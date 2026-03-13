@@ -18,26 +18,58 @@ public class BookRepositoryInMemoryImpl implements BookRepository {
 
     @PostConstruct
     public void init() {
-        // Initialize default books list
-        Book book = new Book("El cien Quijote", Book.Category.NOVEL);
+        // Initialize with default books list
+        Book book = new Book("Don Quijote de la Mancha", Book.Category.NOVEL);
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        book = new Book("Cien Años de Soledad", Book.Category.NOVEL);  // También es NOVEL
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        book = new Book("El Principito", Book.Category.STORY);
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        book = new Book("La Casa de los Espíritus", Book.Category.NOVEL);
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        book = new Book("Breve Historia del Tiempo", Book.Category.SCIENCE);
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        book = new Book("Sapiens: De animales a dioses", Book.Category.SCIENCE);
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        book = new Book("Historia de Roma", Book.Category.HISTORY);
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        book = new Book("El Arte de la Guerra", Book.Category.OTHER);
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        book = new Book("Cuentos de la Selva", Book.Category.STORY);
         BooksList.add(book);
-        book = new Book("Cien Años de Soledad", Book.Category.STORY);
+        book = new Book("La Guerra y la Paz", Book.Category.NOVEL);
+        BooksList.add(book);
+        book = new Book("El amor en los tiempos del cólera", Book.Category.NOVEL);
+        BooksList.add(book);
+        book = new Book("Rayuela", Book.Category.NOVEL);
+        BooksList.add(book);
+        book = new Book("Pedro Páramo", Book.Category.NOVEL);
+        BooksList.add(book);
+        book = new Book("La ciudad y los perros", Book.Category.NOVEL);
+        BooksList.add(book);
+        book = new Book("Conversación en La Catedral", Book.Category.NOVEL);
+        BooksList.add(book);
+        book = new Book("La tía Julia y el escribidor", Book.Category.NOVEL);
+        BooksList.add(book);
+        book = new Book("El alquimista", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("La historia interminable", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("El caballero de la armadura oxidada", Book.Category.STORY);
+        BooksList.add(book);
+        book = new Book("Breve historia del tiempo", Book.Category.SCIENCE);
+        BooksList.add(book);
+        book = new Book("El universo en una cáscara de nuez", Book.Category.SCIENCE);
+        BooksList.add(book);
+        book = new Book("Cosmos", Book.Category.SCIENCE);
+        BooksList.add(book);
+        book = new Book("La realidad no es lo que parece", Book.Category.SCIENCE);
+        BooksList.add(book);
+        book = new Book("Homo Deus", Book.Category.HISTORY);
+        BooksList.add(book);
+        book = new Book("21 lecciones para el siglo XXI", Book.Category.HISTORY);
+        BooksList.add(book);
+        book = new Book("La historia de la humanidad", Book.Category.HISTORY);
         BooksList.add(book);
     }
 

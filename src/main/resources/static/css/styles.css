@@ -122,7 +122,7 @@ body {
     box-shadow: var(--shadow);
     position: sticky;
     top: 0;
-    z-index: 5;
+    z-index: 1000;
 }
 
 .search-container {
@@ -187,10 +187,9 @@ body {
 }
 
 .category-section {
-    margin-bottom: 40px;
     background-color: var(--white);
     border-radius: 12px;
-    padding: 20px;
+    padding: 25px;
     box-shadow: var(--shadow);
     width: 100%;
     max-width: 100%;
@@ -219,7 +218,7 @@ body {
     display: flex;
     overflow-x: auto;
     gap: 20px;
-    padding: 10px 5px;*/
+    padding: 10px 10px;
     /* SOLUCIÓN RADICAL */
     width: 100%;
     max-width: 100%;
@@ -257,7 +256,7 @@ body {
     align-items: center;
     justify-content: center;
     position: absolute;
-    z-index: 2;
+    z-index: 20;
     transition: all 0.3s;
     box-shadow: var(--shadow);
 }
@@ -284,8 +283,36 @@ body {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    transition: transform 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* Transición suave */
     border: 1px solid var(--light-gray);
+    position: relative;
+    z-index: 1;
+}
+
+.book-card:hover {
+    transform: scale(1.05);  /* Agrandar ligeramente */
+    min-width: 200px;         /* Permitir que se expanda */
+    width: auto;             /* Ancho automático según contenido */
+    max-width: 350px;        /* Límite máximo para no ser enorme */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    z-index: 10;           /* Que se superponga a otras tarjetas */
+}
+
+.book-card:hover .book-title {
+    white-space: normal;      /* Permitir múltiples líneas */
+    overflow: visible;
+    text-overflow: clip;
+    word-wrap: break-word;    /* Romper palabras largas */
+}
+
+/* Información del libro que se expande */
+.book-card:hover .book-info {
+    padding: 15px;  /* Mantener padding consistente */
+}
+
+/* Portada se mantiene igual en hover */
+.book-card:hover .book-cover {
+    height: 200px;  /* Mantener altura */
 }
 
 .book-card.loan {
@@ -293,9 +320,16 @@ body {
     width: 160px;
 }
 
-.book-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+.book-card.loan {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.book-card.loan:hover {
+    transform: scale(1.05);
+    min-width: 160px;
+    width: auto;
+    max-width: 300px;  /* Un poco más pequeño en el modal */
+    z-index: 500;     /* Asegurar que se vea sobre otros elementos del modal */
 }
 
 .book-cover {
@@ -313,6 +347,7 @@ body {
 
 .book-cover.loan {
     height: 100px;
+    max-height: 100px;
 }
 
 .book-cover i {
@@ -333,6 +368,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: all 0.3s ease;
 }
 
 /* ===== BOTÓN DE PRÉSTAMO ===== */
@@ -692,8 +728,13 @@ body {
         width: 150px;
     }
 
+    .book-card:hover {
+        min-width: 150px;
+    }
+
     .book-cover {
         height: 150px;  /* Ajustar altura de portada */
+        max-height: 150px;
     }
 
     .book-cover i {

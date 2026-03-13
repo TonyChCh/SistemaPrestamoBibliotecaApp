@@ -155,7 +155,7 @@
         </div>
 
         <!-- Botón de confirmar préstamo -->
-        <form th:action="@{/user/loan/confirm}" method="post">
+        <form class="loan-form" th:action="@{/user/loan/confirm}" method="post">
             <button type="submit"
                     class="confirm-loan-btn"
                     th:disabled="${session.cart == null or #lists.isEmpty(session.cart)}">

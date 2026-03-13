@@ -27,7 +27,7 @@ public class BookController {
         // Fetch all books and add to the model
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("books", books);
-        log.info("Books added to model: '{}', CONTENT: '{}'", books.size(), books);
+        log.info("Books added to model: {}", books.size());
         return "bookmenu";
     }
 
