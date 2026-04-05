@@ -1,6 +1,6 @@
 package webprog2.sistemaprestamobibliotecaapp.repository;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.CrudRepository;
 import webprog2.sistemaprestamobibliotecaapp.data.User;
 import java.util.Optional;
 
@@ -8,9 +8,7 @@ import java.util.Optional;
  * Repository interface for User-related operations.
  * Implementations will be provided later (in-memory, JPA, etc.).
  */
-@Repository
-public interface UserRepository {
-
+public interface UserRepository extends CrudRepository<User, Long> {
     /**
      * Find a user by their userName.
      *

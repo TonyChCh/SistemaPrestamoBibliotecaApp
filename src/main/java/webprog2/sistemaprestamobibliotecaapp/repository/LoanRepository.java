@@ -1,14 +1,13 @@
 package webprog2.sistemaprestamobibliotecaapp.repository;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.CrudRepository;
 import webprog2.sistemaprestamobibliotecaapp.data.Loan;
 import java.util.List;
 /**
  * Repository interface for Loan-related operations.
  * Implementations will be provided later (in-memory, JPA, etc.).
  */
-@Repository
-public interface LoanRepository {
+public interface LoanRepository extends CrudRepository<Loan, Long> {
     /**
      * Return the loan with the given id. If loan doesn't exist, return empty optional.
      */

@@ -20,9 +20,7 @@ public class SessionController {
     private final UserService userService;
 
     // Constructor injection of UserService
-    public SessionController(UserService userService) {
-        this.userService = userService;
-    }
+    public SessionController(UserService userService) { this.userService = userService; }
 
     @PostMapping("/login")
     public String login(@RequestParam("username") String username, HttpSession session) {

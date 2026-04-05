@@ -18,7 +18,7 @@ import java.util.*;
 @Slf4j
 @Controller
 @RequestMapping("/user/loan")
-@SessionAttributes({"user", "cart"})
+@SessionAttributes("cart")
 public class LoanController {
 
     private final LoanService loanService;
