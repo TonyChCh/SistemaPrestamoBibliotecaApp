@@ -108,19 +108,20 @@ public class LoanService {
         newLoan.setUserId(user.getId());
         // Save the loan to the repository
         // Validation of books availability is already done in the addBookToCart method
-
-        // Al hacer .save(), Spring/JPA ejecuta el INSERT, recupera el ID generado
-        // por MySQL y lo inyecta en el objeto que retorna.
         Loan savedLoan = loanRepository.save(newLoan);
         // Extraer el ID de los libros y pasamos una lista de IDs al servicio para verificar disponibilidad
         List<Long> inCartBookIds = new ArrayList<>();
         cart.forEach(book -> inCartBookIds.add(book.getId()));
         // Update the availability of the books
-        int updatedCount = bookRepository.confirmBooksLoan(inCartBookIds, savedLoan.getId());
+        int updatedCount = bookRepository.confirmLoanBooks(inCartBookIds);
         // Si el número de libros actualizados no coincide con el tamaño del carrito,
         // significa que uno o más libros ya no están disponibles
         if (updatedCount != cart.size()) {
             throw new RuntimeException("Uno o más libros ya no están disponibles.");
+        }
+        // Insertar registros en historial de préstamos
+        for (Long bookId : inCartBookIds) {
+            loanRepository.saveLoanHistory(savedLoan.getId(), bookId);
         }
     }
     /**

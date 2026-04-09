@@ -20,8 +20,6 @@ import java.time.LocalDate;
 public class Book {
     @Id
     private Long id;
-    @Column("loan_id")
-    private Long loanId;
     @NotNull
     private String title;
     @NotNull

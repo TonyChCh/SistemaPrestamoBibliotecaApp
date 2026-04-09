@@ -38,11 +38,41 @@ public class UserService {
         return userRepository.findByUserName(username.trim());
     }
 
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public Optional<User> getUserById(Long id) {
+        if (id == null || id < 0) {
+            return Optional.empty();
+        }
+        return userRepository.findById(id);
+    }
+
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
+    public User updateUserFields(Long id, User updatedUser) {
+        return userRepository.findById(id)
+                .map(existingUser -> {
+                    if (updatedUser.getType() != null) {
+                        existingUser.setType(updatedUser.getType());
+                    }
+                    if (updatedUser.getPassword() != null && !updatedUser.getPassword().trim().isEmpty()) {
+                        existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+                    }
+                    return userRepository.save(existingUser);
+                })
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    // Metodo para inicializar usuarios de prueba
      @PostConstruct
      void init() {
         User regularUser = userRepository.findByUserName("john_doe")
