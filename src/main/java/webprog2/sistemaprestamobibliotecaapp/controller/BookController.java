@@ -37,10 +37,11 @@ public class BookController {
                               Model model,
                               @AuthenticationPrincipal User user) {
         model.addAttribute("user", user);
-        List<Book> searchResults = bookService.searchBookByTitle(query);
-        if (query.isEmpty()) {
+        if (query == null || query.trim().isEmpty()) {
             return "redirect:/user/bookmenu";
         }
+        List<Book> searchResults = bookService.searchBooksByTitle(query);
+
         model.addAttribute("books", searchResults);
         model.addAttribute("categories", Book.Category.values());
         log.info("Books {} ", model.getAttribute("books"));

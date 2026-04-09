@@ -13,7 +13,8 @@ public interface BookRepository extends CrudRepository<Book, Long> {
     /**
      * Return the list of books for a given title. If book doesn't exist, return empty list.
      */
-    List<Book> findBooksByTitle(String title);
+
+    List<Book> findByTitleContainingIgnoreCase(String title);
     /**
      * Return the list of books for a given category. If book doesn't exist, return empty list.
      */
