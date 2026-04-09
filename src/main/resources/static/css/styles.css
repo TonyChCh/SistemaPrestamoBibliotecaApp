@@ -84,7 +84,10 @@ body {
     margin-bottom: 10px;
 }
 
-.sidebar nav ul li a {
+.sidebar .link-button { all: unset; }
+
+.sidebar nav ul li a,
+.sidebar .link-button{
     display: block;
     padding: 12px 20px;
     color: var(--white);
@@ -93,7 +96,8 @@ body {
     transition: all 0.3s;
 }
 
-.sidebar nav ul li a:hover {
+.sidebar a:hover,
+.sidebar .link-button:hover {
     background-color: var(--secondary-color);
     transform: translateX(5px);
 }

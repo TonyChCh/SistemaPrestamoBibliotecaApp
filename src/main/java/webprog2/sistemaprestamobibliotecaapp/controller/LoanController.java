@@ -2,6 +2,7 @@ package webprog2.sistemaprestamobibliotecaapp.controller;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -31,8 +32,9 @@ public class LoanController {
         return new ArrayList<>();  // Carrito vacío al inicio
     }
 
-    @GetMapping("loanhistory")
-    public String showLoanHistory(Model model, @ModelAttribute("user") User user) {
+    @GetMapping("/loanhistory")
+    public String showLoanHistory(Model model, @AuthenticationPrincipal User user) {
+        model.addAttribute("user", user);
         List<Loan> loanHistory = loanService.getLoansForUser(user);
 
         if (!loanHistory.isEmpty()) {
@@ -66,12 +68,11 @@ public class LoanController {
 
     @PostMapping("/confirm")
     public String confirmLoan(@ModelAttribute("cart") List<Book> cart,
-                              @ModelAttribute("user") User user,
+                              @AuthenticationPrincipal User user,
                               RedirectAttributes redirectAttributes) {
         int bookCount = cart.size();
         loanService.loanBookToUser(user, cart);
         log.info("Loan confirmed for user {} with {} books.", user.getUserName(), bookCount);
-        List<Loan> loanHistory = loanService.getLoansForUser(user);
         // Guardar mensaje de éxito antes de limpiar
         redirectAttributes.addFlashAttribute("successMessage",
                 "¡Préstamo confirmado exitosamente! Se prestaron " + bookCount + " libros.");
@@ -89,7 +90,4 @@ public class LoanController {
                 "¡Préstamo devuelto exitosamente!");
         return "redirect:/user/loan/loanhistory";
     }
-
-
-
 }

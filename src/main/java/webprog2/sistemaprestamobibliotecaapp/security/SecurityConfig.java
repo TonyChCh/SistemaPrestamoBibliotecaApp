@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import webprog2.sistemaprestamobibliotecaapp.service.UserService;
 
 @Configuration
@@ -16,6 +17,9 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() { return new HttpSessionEventPublisher(); }
 
     @Bean
     public UserDetailsService userDetailsService(UserService userService) {

@@ -64,23 +64,27 @@
 
 <body>
 
-<div class="app-container">  <!-- ✅ CAMBIADO: container → app-container -->
+<div class="app-container">
 
     <!-- Left column -->
-    <aside class="sidebar">  <!-- ✅ ESTA SÍ EXISTE -->
+    <aside class="sidebar">
         <div class="logo">
             <a th:href="@{/}"><img th:src="@{/images/JustDoIt.png}" alt="JustDoIt Logo" width="200" height="200"></a>
         </div>
     </aside>
 
     <!-- Right column -->
-    <main class="main-content">  <!-- ✅ CAMBIADO: content → main-content -->
+    <main class="main-content">
         <h1>Sistema de Préstamo de Biblioteca Digital</h1>
 
         <form th:action="@{/login}" method="post" class="login-form">
             <div>
                 <label for="username">Usuario</label>
                 <input type="text" id="username" name="username" placeholder="Ingrese su usuario" required />
+            </div>
+            <div>
+                <label for="username">Password</label>
+                <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required />
             </div>
             <div>
                 <button type="submit">Ingresar</button>

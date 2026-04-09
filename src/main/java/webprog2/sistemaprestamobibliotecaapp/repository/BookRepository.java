@@ -1,7 +1,10 @@
 package webprog2.sistemaprestamobibliotecaapp.repository;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.data.jdbc.repository.query.Modifying;
+import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 import webprog2.sistemaprestamobibliotecaapp.data.Book;
 import java.util.List;
 
@@ -9,10 +12,6 @@ import java.util.List;
  * Repository abstraction for task operations.
  */
 public interface BookRepository extends CrudRepository<Book, Long> {
-    /**
-     * Return the book with the given id. If book doesn't exist, return null.
-     */
-    Book findBookById(Long bookId);
     /**
      * Return the list of books for a given title. If book doesn't exist, return empty list.
      */
@@ -22,68 +21,43 @@ public interface BookRepository extends CrudRepository<Book, Long> {
      */
     List<Book> findBookByCategory(String type);
     /**
-     * Return the list of all books. If no books exist, return empty list.
+     * Return the list of all books.
      */
-    List<Book> findAllBooks();
-    /**
-     * Add a book to the book repository.
-     */
-    void saveBook(Book book);
+    List<Book> findAll();
 
-    @PostConstruct
-    default void init() {
-        // Initialize with default books list
-        Book book = new Book("Don Quijote de la Mancha", Book.Category.NOVEL);
-        saveBook(book);
-        book = new Book("Cien Años de Soledad", Book.Category.NOVEL);  // También es NOVEL
-        saveBook(book);
-        book = new Book("El Principito", Book.Category.STORY);
-        saveBook(book);
-        book = new Book("La Casa de los Espíritus", Book.Category.NOVEL);
-        saveBook(book);
-        book = new Book("Breve Historia del Tiempo", Book.Category.SCIENCE);
-        saveBook(book);
-        book = new Book("Sapiens: De animales a dioses", Book.Category.SCIENCE);
-        saveBook(book);
-        book = new Book("Historia de Roma", Book.Category.HISTORY);
-        saveBook(book);
-        book = new Book("El Arte de la Guerra", Book.Category.OTHER);
-        saveBook(book);
-        book = new Book("Cuentos de la Selva", Book.Category.STORY);
-        saveBook(book);
-        book = new Book("La Guerra y la Paz", Book.Category.NOVEL);
-        saveBook(book);
-        book = new Book("El amor en los tiempos del cólera", Book.Category.NOVEL);
-        saveBook(book);
-        book = new Book("Rayuela", Book.Category.NOVEL);
-        saveBook(book);
-        book = new Book("Pedro Páramo", Book.Category.NOVEL);
-        saveBook(book);
-        book = new Book("La ciudad y los perros", Book.Category.NOVEL);
-        saveBook(book);
-        book = new Book("Conversación en La Catedral", Book.Category.NOVEL);
-        saveBook(book);
-        book = new Book("La tía Julia y el escribidor", Book.Category.NOVEL);
-        saveBook(book);
-        book = new Book("El alquimista", Book.Category.STORY);
-        saveBook(book);
-        book = new Book("La historia interminable", Book.Category.STORY);
-        saveBook(book);
-        book = new Book("El caballero de la armadura oxidada", Book.Category.STORY);
-        saveBook(book);
-        book = new Book("Breve historia del tiempo", Book.Category.SCIENCE);
-        saveBook(book);
-        book = new Book("El universo en una cáscara de nuez", Book.Category.SCIENCE);
-        saveBook(book);
-        book = new Book("Cosmos", Book.Category.SCIENCE);
-        saveBook(book);
-        book = new Book("La realidad no es lo que parece", Book.Category.SCIENCE);
-        saveBook(book);
-        book = new Book("Homo Deus", Book.Category.HISTORY);
-        saveBook(book);
-        book = new Book("21 lecciones para el siglo XXI", Book.Category.HISTORY);
-        saveBook(book);
-        book = new Book("La historia de la humanidad", Book.Category.HISTORY);
-        saveBook(book);
-    }
+    List<Book> findAllByLoanId(Long loanId);
+    /** Aquí se agregan los métodos personalizados para liberar libros, reservar libros y confirmar préstamos.
+     *  Estos métodos utilizan anotaciones de Spring Data JDBC para realizar operaciones de actualización
+     *  en la base de datos.
+    */
+    @Modifying
+    @Query("UPDATE BOOK b SET b.status = 'AVAILABLE', b.available = TRUE, b.loan_id = null " +
+            "WHERE b.status = 'RESERVED'")
+    void releaseAllReservedBooks();
+
+    // Libera los libros cuando se devuelve un préstamo, se libera los lirbos asociados a ese préstamo.
+    @Modifying // Indica que es una operación de escritura (UPDATE/DELETE)
+    @Query("UPDATE BOOK b SET b.status = 'AVAILABLE', b.available = TRUE, b.loan_id = null " +
+            "WHERE b.loan_id = :loanId")
+    void releaseBooksByLoanId(Long loanId);
+    // Libera los libros que estaban reservados en el carrito cuando la sesión destruya.
+    @Modifying
+    @Query("UPDATE BOOK b SET b.status = 'AVAILABLE', b.available = TRUE " +
+            "WHERE b.id IN (:bookIds) AND b.status = 'RESERVED'")
+    void releaseBooksByIds(List<Long> bookIds);
+    // Reserva un libro para el carrito, solo si el libro está disponible. Retorna el número de filas afectadas (0 o 1).
+    @Modifying
+    @Query("UPDATE BOOK b SET b.status = 'RESERVED', b.available = FALSE " +
+            "WHERE b.id = :id AND b.available = TRUE ")
+    int reserveBook(Long id);
+    // Libera un libro del carrito, solo si el libro estaba reservado. Retorna el número de filas afectadas (0 o 1).
+    @Modifying
+    @Query("UPDATE BOOK b SET b.status = 'AVAILABLE', b.available = TRUE " +
+            "WHERE b.id = :id AND b.status = 'RESERVED'")
+    int releaseBookFromCart(Long id);
+    // Actualiza el estado de los libros y le asigna el ID del préstamo, solo si los libros estaban reservados.
+    @Modifying
+    @Query("UPDATE BOOK b SET b.status = 'LOANED', b.available = false, b.loan_id = :loanId " +
+            "WHERE b.id IN (:bookIds) AND b.status = 'RESERVED'")
+    int confirmBooksLoan(List<Long> bookIds, Long loanId);
 }

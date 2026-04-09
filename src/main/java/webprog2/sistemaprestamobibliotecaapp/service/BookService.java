@@ -1,6 +1,8 @@
 package webprog2.sistemaprestamobibliotecaapp.service;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import webprog2.sistemaprestamobibliotecaapp.data.Book;
 import webprog2.sistemaprestamobibliotecaapp.repository.BookRepository;
 import java.util.List;
@@ -15,13 +17,6 @@ public class BookService {
 
     // Constructor injection
     public BookService(BookRepository bookRepository) { this.bookRepository = bookRepository; }
-
-    /**
-     * Get a book by its id.
-     * @param id the id of the book to retrieve
-     * @return Book with the given id, or null if not found
-     */
-    public Book getBookById(Long id) { return bookRepository.findBookById(id); }
     /**
      * Get a list of books by their title.
      * @param title the title to search for
@@ -37,5 +32,5 @@ public class BookService {
     /**
      * @return List of all Books
      */
-    public List<Book> getAllBooks() { return bookRepository.findAllBooks(); }
+    public List<Book> getAllBooks() {return bookRepository.findAll(); }
 }

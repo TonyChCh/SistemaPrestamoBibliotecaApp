@@ -9,15 +9,7 @@ import java.util.List;
  */
 public interface LoanRepository extends CrudRepository<Loan, Long> {
     /**
-     * Return the loan with the given id. If loan doesn't exist, return empty optional.
-     */
-    Loan findLoanByLoanId(Long loanId);
-    /**
      * Return the list of loans for a given userId. If user doesn't exist, return empty list.
      */
     List<Loan> findLoanByUserId(Long userId);
-    /**
-     * Add a loan to the loan repository.
-     */
-    void saveLoan(Loan loan);
 }

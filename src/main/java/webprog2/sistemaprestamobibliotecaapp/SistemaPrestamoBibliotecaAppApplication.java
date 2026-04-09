@@ -5,17 +5,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import webprog2.sistemaprestamobibliotecaapp.interceptor.AuthenticationInterceptor;
 import webprog2.sistemaprestamobibliotecaapp.interceptor.TimingInterceptor;
 
 @SpringBootApplication
 public class SistemaPrestamoBibliotecaAppApplication implements WebMvcConfigurer {
 
-    private final AuthenticationInterceptor authenticationInterceptor;
     private final TimingInterceptor timingInterceptor;
 
-    public SistemaPrestamoBibliotecaAppApplication(AuthenticationInterceptor authenticationInterceptor, TimingInterceptor timingInterceptor) {
-        this.authenticationInterceptor = authenticationInterceptor;
+    public SistemaPrestamoBibliotecaAppApplication(TimingInterceptor timingInterceptor) {
         this.timingInterceptor = timingInterceptor;
     }
 
@@ -26,17 +23,14 @@ public class SistemaPrestamoBibliotecaAppApplication implements WebMvcConfigurer
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("home");
+        registry.addViewController("/admin").setViewName("admin");
         registry.addViewController("/user/bookmenu").setViewName("bookmenu");
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authenticationInterceptor)
-                .addPathPatterns("/**");
-
         registry.addInterceptor(timingInterceptor)
                 .addPathPatterns("/**");
-
     }
 
 }

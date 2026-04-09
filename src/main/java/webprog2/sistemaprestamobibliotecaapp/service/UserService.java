@@ -1,9 +1,12 @@
 package webprog2.sistemaprestamobibliotecaapp.service;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import webprog2.sistemaprestamobibliotecaapp.data.User;
 import webprog2.sistemaprestamobibliotecaapp.repository.UserRepository;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -33,5 +36,24 @@ public class UserService {
             return Optional.empty();
         }
         return userRepository.findByUserName(username.trim());
+    }
+
+    public User createUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
+     @PostConstruct
+     void init() {
+        User regularUser = userRepository.findByUserName("john_doe")
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User adminUser = userRepository.findByUserName("chuck_norris")
+                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        regularUser.setPassword(passwordEncoder.encode("test"));
+        userRepository.save(regularUser);
+
+        adminUser.setPassword(passwordEncoder.encode("test"));
+        userRepository.save(adminUser);
     }
 }

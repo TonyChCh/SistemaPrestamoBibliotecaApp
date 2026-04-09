@@ -25,11 +25,9 @@ public class BookController {
         model.addAttribute("user", user);
         // Add categories to the model for the dropdown
         model.addAttribute("categories", Book.Category.values());
-        log.info("Categories added to model: {}", List.of(Book.Category.values()));
         // Fetch all books and add to the model
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("books", books);
-        log.info("Books added to model: {}", books.size());
         return "bookmenu";
     }
 

@@ -1,7 +1,7 @@
 package webprog2.sistemaprestamobibliotecaapp.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.transaction.annotation.Transactional;
 import webprog2.sistemaprestamobibliotecaapp.data.Book;
 import webprog2.sistemaprestamobibliotecaapp.data.Loan;
 import webprog2.sistemaprestamobibliotecaapp.data.User;
@@ -35,8 +35,13 @@ public class LoanService {
      * @param user the user to get loans for
      * @return Optional containing a list of Loans if found
      */
+    @Transactional(readOnly = true)
     public List<Loan> getLoansForUser(User user) {
-        List<Loan> loanHistory = new ArrayList<>(loanRepository.findLoanByUserId(user.getId()));
+        List<Loan> loanHistory = loanRepository.findLoanByUserId(user.getId());
+        loanHistory.forEach(loan -> {
+            List<Book> booksInLoan = bookRepository.findAllByLoanId(loan.getId());
+            loan.setBooks(booksInLoan);
+        });
         // Ordenar para mejor vista, orden: RETURNED > ACTIVE > fecha_mas_vieja > fecha_mas_reciente
         loanHistory.sort(Comparator
                 // Por estado (RETURNED primero, luego ACTIVE)
@@ -48,7 +53,6 @@ public class LoanService {
         Collections.reverse(loanHistory);
         return loanHistory;
     }
-
     /**
      * Add a book to the user's cart if it's available. This method checks the availability of the book
      * before adding it to the cart and updates the availability status of the book accordingly.
@@ -57,17 +61,21 @@ public class LoanService {
      * @param cart   the current list of books in the user's cart
      * @return true if the book was successfully added to the cart, false otherwise
      */
-    public boolean addBookToCart(long bookId, @ModelAttribute("cart") List<Book> cart) {
-        Book book = bookRepository.findBookById(bookId);
-        if (book != null && book.isAvailable()) {
-            book.setAvailable(false);
+    @Transactional
+    public boolean addBookToCart(long bookId, List<Book> cart) {
+        // Try to reserve the book in DB, this method returns the number of rows affected (0 or 1)
+        int rowsAffected = bookRepository.reserveBook(bookId);
+
+        if (rowsAffected > 0) {
+            // Only if the book was successfully reserved, we add it to the cart
+            Book book = bookRepository.findById(bookId)
+                    .orElseThrow(() -> new IllegalArgumentException("Book with id " + bookId + " not found."));
             cart.add(book);
             return true;
-        } else {
-            return false;
         }
+        // If rowsAffected is 0, it means the book was already reserved by someone else
+        return false;
     }
-
     /**
      * Remove a book from the user's cart and update its availability status.
      *
@@ -75,55 +83,63 @@ public class LoanService {
      * @param cart   the current list of books in the user's cart
      * @return true if the book was successfully removed from the cart, false otherwise
      */
-    public boolean removeBookFromCart(long bookId, @ModelAttribute("cart") List<Book> cart) {
-        // Find the book in the cart
-        Book bookInCart = cart.stream()
-                .filter(book -> book.getId().equals(bookId))
-                .findFirst()
-                .orElse(null);
-        // Remove the book from the cart
-        if (bookInCart != null) {
-            bookInCart.setAvailable(true);
-            cart.remove(bookInCart);
-            return true;
-        } else {
-            return false;
-        }
-    }
+    @Transactional
+    public boolean removeBookFromCart(long bookId, List<Book> cart) {
+        // Try to release the book in DB, this method returns the number of rows affected (0 or 1)
+        int rowsAffected = bookRepository.releaseBookFromCart(bookId);
 
+        if (rowsAffected > 0) {
+            // Only if the book was successfully released, we remove it from the cart
+            return cart.removeIf(book -> book.getId().equals(bookId));
+        }
+        // If rowsAffected is 0, it means the book was not in the cart or was already released
+        return false;
+    }
     /**
      * Create a new loan for a user with the given list of books.
      * This method checks if the books are available before creating the loan.
      * @param user  the user to loan the books to
      * @param cart the list of books to loan
      */
+    @Transactional
     public void loanBookToUser(User user, List<Book> cart) {
-        // Create a copy of the cart to avoid modifying the original list outside this method
-        List<Book> books = cart.stream().toList();
-        Loan loan = new Loan(user.getId(), books);
-        // No available's book can't get into loan cart, the controller guarantees it
-        // Update the availability of the books
-        books.forEach(book -> book.setAvailable(false));
+        // Crear un nuevo préstamo para el usuario
+        Loan newLoan = new Loan();
+        newLoan.setUserId(user.getId());
         // Save the loan to the repository
-        loanRepository.saveLoan(loan);
-    }
+        // Validation of books availability is already done in the addBookToCart method
 
+        // Al hacer .save(), Spring/JPA ejecuta el INSERT, recupera el ID generado
+        // por MySQL y lo inyecta en el objeto que retorna.
+        Loan savedLoan = loanRepository.save(newLoan);
+        // Extraer el ID de los libros y pasamos una lista de IDs al servicio para verificar disponibilidad
+        List<Long> inCartBookIds = new ArrayList<>();
+        cart.forEach(book -> inCartBookIds.add(book.getId()));
+        // Update the availability of the books
+        int updatedCount = bookRepository.confirmBooksLoan(inCartBookIds, savedLoan.getId());
+        // Si el número de libros actualizados no coincide con el tamaño del carrito,
+        // significa que uno o más libros ya no están disponibles
+        if (updatedCount != cart.size()) {
+            throw new RuntimeException("Uno o más libros ya no están disponibles.");
+        }
+    }
     /**
      * Return a loan by its id. This method updates the availability
      * of the books in the loan and changes the status of the loan to "RETURNED".
      */
-     public void returnLoan(Long LoanId) {
-        Loan loan = loanRepository.findLoanByLoanId(LoanId);
-        if (loan != null) {
-            // If the loan is already returned, do nothing
-            if (loan.getStatus() == Loan.Status.RETURNED) { return; }
-            // Update the availability of the books in the loan
-            loan.getBooks().forEach(book -> book.setAvailable(true));
-            // Change the status of the loan to returned
-            loan.setReturnTime(LocalDateTime.now());
-            loan.setStatus(Loan.Status.RETURNED);
-        } else {
-            throw new IllegalArgumentException("Loan with id " + LoanId + " not found.");
-        }
+    @Transactional
+     public void returnLoan(Long loanId) {
+        // Find the loan by its ID, if it doesn't exist, throw an exception
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new IllegalArgumentException("Loan with id " + loanId + " not found."));
+        // If the loan is already returned, do nothing
+        if (!loan.isActive()) { return; }
+        // Change the status of the loan to returned and set the return time
+        loan.setActive(false);
+        loan.setReturnTime(LocalDateTime.now());
+        // Update the loan in the repository
+        loanRepository.save(loan);
+        // Update the books availability in the repository
+        bookRepository.releaseBooksByLoanId(loanId);
     }
 }
