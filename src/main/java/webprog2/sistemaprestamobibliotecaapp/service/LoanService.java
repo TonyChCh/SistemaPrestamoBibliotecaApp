@@ -9,10 +9,8 @@ import webprog2.sistemaprestamobibliotecaapp.repository.LoanRepository;
 import webprog2.sistemaprestamobibliotecaapp.repository.BookRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service responsible for loan-related business logic.
@@ -32,12 +30,12 @@ public class LoanService {
     /**
      * Get all loans for a given user.
      *
-     * @param user the user to get loans for
+     * @param userId of the user to get loans for
      * @return Optional containing a list of Loans if found
      */
     @Transactional(readOnly = true)
-    public List<Loan> getLoansForUser(User user) {
-        List<Loan> loanHistory = loanRepository.findLoanByUserId(user.getId());
+    public List<Loan> getLoansForUser(Long userId) {
+        List<Loan> loanHistory = loanRepository.findByUserId(userId);
         loanHistory.forEach(loan -> {
             List<Book> booksInLoan = bookRepository.findAllByLoanId(loan.getId());
             loan.setBooks(booksInLoan);
@@ -62,7 +60,7 @@ public class LoanService {
      * @return true if the book was successfully added to the cart, false otherwise
      */
     @Transactional
-    public boolean addBookToCart(long bookId, List<Book> cart) {
+    public boolean addBookToCart(Long bookId, List<Book> cart) {
         // Try to reserve the book in DB, this method returns the number of rows affected (0 or 1)
         int rowsAffected = bookRepository.reserveBook(bookId);
 
@@ -84,7 +82,7 @@ public class LoanService {
      * @return true if the book was successfully removed from the cart, false otherwise
      */
     @Transactional
-    public boolean removeBookFromCart(long bookId, List<Book> cart) {
+    public boolean removeBookFromCart(Long bookId, List<Book> cart) {
         // Try to release the book in DB, this method returns the number of rows affected (0 or 1)
         int rowsAffected = bookRepository.releaseBookFromCart(bookId);
 
@@ -98,17 +96,21 @@ public class LoanService {
     /**
      * Create a new loan for a user with the given list of books.
      * This method checks if the books are available before creating the loan.
-     * @param user  the user to loan the books to
-     * @param inCartBookIds the list of books to loan
+     * @param userId of the user to loan the books to
+     * @param cart the list of books to loan
      */
     @Transactional
-    public void loanBookToUser(User user, List<Long> inCartBookIds) {
+    public void loanBookToUser(Long userId, List<Book> cart) {
         // Create a new loan for the user
         Loan newLoan = new Loan();
-        newLoan.setUserId(user.getId());
+        newLoan.setUserId(userId);
         // Save the loan to the repository
         // Validation of books availability is already done in the addBookToCart method
         Loan savedLoan = loanRepository.save(newLoan);
+        // Get the list of book IDs from the cart
+        List<Long> inCartBookIds = cart.stream()
+                .map(Book::getId)
+                .collect(Collectors.toList());
         // Update the availability of the books
         int updatedCount = bookRepository.confirmLoanBooks(inCartBookIds);
         // If the number of updated books does not match the size of the cart,
@@ -126,18 +128,47 @@ public class LoanService {
      * of the books in the loan and changes the status of the loan to "RETURNED".
      */
     @Transactional
-     public void returnLoan(Long loanId) {
+     public Loan returnLoan(Long loanId) {
         // Find the loan by its ID, if it doesn't exist, throw an exception
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan with id " + loanId + " not found."));
         // If the loan is already returned, do nothing
-        if (!loan.isActive()) { return; }
+        if (!loan.isActive()) { return loan; }
+        // Update the books availability in the repository
+        bookRepository.releaseBooksByLoanId(loanId);
         // Change the status of the loan to returned and set the return time
         loan.setActive(false);
         loan.setReturnTime(LocalDateTime.now());
         // Update the loan in the repository
-        loanRepository.save(loan);
-        // Update the books availability in the repository
-        bookRepository.releaseBooksByLoanId(loanId);
+        return loanRepository.save(loan);
+    }
+
+    // API Methods
+
+    public List<Loan> getAllLoans() { return loanRepository.findAll(); }
+
+    public Optional<Loan> getLoanById(Long id) { return loanRepository.findById(id); }
+
+    public List<Book> getLoanRegistry(Long id) { return bookRepository.findAllByLoanId(id); }
+
+    public List<Loan> getLoansByUserId(Long userId) { return loanRepository.findByUserId(userId); }
+
+    public List<Loan> getActiveLoans() { return loanRepository.findByActiveTrue(); }
+
+    public List<Loan> getReturnedLoans() { return loanRepository.findByActiveFalse(); }
+
+    // The difference with the loanBookToUser method is that this method receives a list of book IDs instead of a cart of Book.
+    // And it checks directly the availability of the books in the database without needing to reserve them.
+    @Transactional
+    public Loan createLoan(Long userId, List<Long> bookIds) {
+        Loan newLoan = new Loan();
+        newLoan.setUserId(userId);
+        Loan savedLoan = loanRepository.save(newLoan);
+        int updatedCount = bookRepository.confirmLoanBooksAPI(bookIds);
+        if (updatedCount != bookIds.size()) {
+            throw new RuntimeException("Uno o más libros ya no están disponibles.");
+        }
+        for (Long bookId : bookIds) { loanRepository.saveLoanHistory(savedLoan.getId(), bookId); }
+        return savedLoan;
     }
 }

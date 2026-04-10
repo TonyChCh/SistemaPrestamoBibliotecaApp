@@ -36,7 +36,7 @@ public class LoanController {
     @GetMapping("/loanhistory")
     public String showLoanHistory(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("user", user);
-        List<Loan> loanHistory = loanService.getLoansForUser(user);
+        List<Loan> loanHistory = loanService.getLoansForUser(user.getId());
 
         if (!loanHistory.isEmpty()) {
             log.info("Loan history for user {}: {}", user.getUserName(), loanHistory);
@@ -71,11 +71,8 @@ public class LoanController {
     public String confirmLoan(@ModelAttribute("cart") List<Book> cart,
                               @AuthenticationPrincipal User user,
                               RedirectAttributes redirectAttributes) {
-        List<Long> inCartBookIds = cart.stream()
-                .map(Book::getId)
-                .collect(Collectors.toList());
         // Realizar el préstamo de los libros en el carrito para el usuario
-        loanService.loanBookToUser(user, inCartBookIds);
+        loanService.loanBookToUser(user.getId(), cart);
 
         log.info("Loan confirmed for user {} with {} books.", user.getUserName(), cart.size());
         // Guardar mensaje de éxito antes de limpiar
@@ -87,7 +84,7 @@ public class LoanController {
     }
 
     @PostMapping("/return")
-    public String returnLoan(@RequestParam("loanId") long loanId,
+    public String returnLoan(@RequestParam("loanId") Long loanId,
                              RedirectAttributes redirectAttributes){
         loanService.returnLoan(loanId);
         log.info("Loan with id: {} was returned", loanId);

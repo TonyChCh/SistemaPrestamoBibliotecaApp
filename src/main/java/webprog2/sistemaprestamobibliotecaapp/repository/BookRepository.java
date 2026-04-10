@@ -33,7 +33,7 @@ public interface BookRepository extends CrudRepository<Book, Long> {
      *  en la base de datos.
     */
     @Query("SELECT * FROM BOOK WHERE status = 'LOANED'")
-    Iterable<Book> findAllLoaned();
+    List<Book> findAllLoanedBook();
 
     // Recupera los libros asociados a un préstamo específico, la consulta une las tablas BOOK y LOAN_HISTORY.
     @Query("SELECT b.* FROM BOOK b JOIN LOAN_HISTORY lh ON b.id = lh.book_id WHERE lh.loan_id = :loanId")
@@ -70,4 +70,9 @@ public interface BookRepository extends CrudRepository<Book, Long> {
     @Query("UPDATE BOOK b SET b.status = 'LOANED', b.available = false " +
             "WHERE b.id IN (:bookIds) AND b.status = 'RESERVED'")
     int confirmLoanBooks(List<Long> bookIds);
+
+    @Modifying
+    @Query("UPDATE BOOK b SET b.status = 'LOANED', b.available = false " +
+            "WHERE b.id IN (:bookIds) AND b.available = true")
+    int confirmLoanBooksAPI(List<Long> bookIds);
 }

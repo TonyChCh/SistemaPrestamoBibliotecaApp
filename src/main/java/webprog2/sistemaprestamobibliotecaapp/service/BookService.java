@@ -28,9 +28,7 @@ public class BookService {
      * @return List of Books matching the title
      */
     public List<Book> searchBooksByTitle(String title) {
-        if (title == null || title.trim().isEmpty()) {
-            return new ArrayList<>();
-        }
+        if (title == null || title.trim().isEmpty()) { return new ArrayList<>(); }
         // Limpia y separa por espacios (ej: "quijote mancha")
         String[] words = title.trim().toLowerCase().split("\\s+");
 
@@ -49,24 +47,21 @@ public class BookService {
         return results;
     }
 
+    // API Methods
+
     public List<Book> getAllBooks() {return bookRepository.findAll(); }
 
-    public Optional<Book> getBookById(Long id) {
-        if (id == null || id < 0) {
-            return Optional.empty();
-        }
-        return bookRepository.findById(id);
-    }
+    public Optional<Book> getBookById(Long id) { return bookRepository.findById(id); }
 
     public List<Book> getBooksByCategory(String category) { return bookRepository.findBookByCategory(category); }
 
     public List<Book> getAvailableBooks() { return bookRepository.findByAvailableTrue(); }
 
-    public Iterable<Book> getLoanedBooks() { return bookRepository.findAllLoaned(); }
-
+    public List<Book> getLoanedBooks() { return bookRepository.findAllLoanedBook(); }
 
     public Book createBook(Book Book) { return bookRepository.save(Book); }
 
+    @Transactional
     public Book updateBookFields(Long id, Book updatedBook) {
         return bookRepository.findById(id)
                 .map(existingBook -> {

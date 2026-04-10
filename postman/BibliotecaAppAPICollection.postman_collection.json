@@ -18,14 +18,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/users",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "users"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"]
             },
             "description": "Obtiene la lista completa de usuarios"
           },
@@ -38,15 +32,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "users",
-                "{{userId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
             },
             "description": "Obtiene un usuario por su id (usa la variable {{userId}})."
           },
@@ -73,14 +60,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/users",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "users"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"]
             },
             "description": "Crea un nuevo usuario. Ajusta userName y demás campos según necesites. Devuelve el usuario creado."
           },
@@ -107,15 +88,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "users",
-                "{{userId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
             },
             "description": "Actualiza campos del usuario. Solo envía los campos que quieras modificar."
           },
@@ -128,15 +102,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "users",
-                "{{userId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
             },
             "description": "Elimina el usuario indicado por {{userId}}"
           },
@@ -154,14 +121,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/books",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"]
             },
             "description": "Obtiene la lista completa de libros"
           },
@@ -174,15 +135,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books",
-                "{{bookId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "{{bookId}}"]
             },
             "description": "Obtiene un libro por su id (usa la variable {{bookId}})."
           },
@@ -195,15 +149,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/books/categories",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books",
-                "categories"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "categories"]
             },
             "description": "Obtiene la lista de categorías de libros."
           },
@@ -216,16 +163,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/books/categories/{{category}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books",
-                "categories",
-                "{{category}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "categories", "{{category}}"]
             },
             "description": "Obtiene libros por categoría. Reemplaza {{category}} por la categoría deseada (ej: NOVEL, SCIENCE, HISTORY)."
           },
@@ -238,23 +177,16 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/books/search?title={{searchTerm}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books",
-                "search"
-              ],
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "search"],
               "query": [
                 {
                   "key": "title",
                   "value": "{{searchTerm}}",
-                  "description": "Término de búsqueda para el título del libro (puede ser parcial)"
+                "description": "Término de búsqueda para el título del libro (puede ser parcial)"
                 }
               ],
-              "description": "Busca libros por título usando un término de búsqueda (puede ser parcial). Reemplaza {{searchTerm}} por el término deseado."
+            "description": "Busca libros por título usando un término de búsqueda (puede ser parcial). Reemplaza {{searchTerm}} por el término deseado."
             },
             "response": []
           }
@@ -262,134 +194,217 @@
         {
           "name": "Get Available Books",
           "request": {
-              "method": "GET",
-              "header": [],
-              "url": {
+            "method": "GET",
+            "header": [],
+            "url": {
               "raw": "{{baseUrl}}/api/v1/books/available",
-              "host": [
-                  "{{baseUrl}}"
-              ],
-              "path": [
-                  "api",
-                  "v1",
-                  "books",
-                  "available"
-              ]
-              },
-              "description": "Obtiene la lista de libros disponibles para préstamo."
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "available"]
+            },
+            "description": "Obtiene la lista de libros disponibles para préstamo."
           },
           "response": []
         },
         {
-            "name": "Get Loaned Books",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                "raw": "{{baseUrl}}/api/v1/books/loaned",
-                "host": [
-                    "{{baseUrl}}"
-                ],
-                "path": [
-                    "api",
-                    "v1",
-                    "books",
-                    "loaned"
-                ]
-                },
-                "description": "Obtiene la lista de libros actualmente prestados."
+          "name": "Get Loaned Books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/loaned",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "loaned"]
             },
-            "response": []
+            "description": "Obtiene la lista de libros actualmente prestados."
+          },
+          "response": []
         },
         {
-            "name": "Create Book",
-            "request": {
-                "method": "POST",
-                "header": [
-                {
-                    "key": "Content-Type",
-                    "value": "application/json"
+          "name": "Create Book",
+          "request": {
+            "method": "POST",
+            "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"La Odisea\",\n  \"category\": \"NOVEL\"\n}",
+              "options": {
+                "raw": {
+                "language": "json"
                 }
-                ],
-                "body": {
-                "mode": "raw",
-                "raw": "{\n  \"title\": \"La Odisea\",\n  \"category\": \"NOVEL\"\n}",
-                "options": {
-                    "raw": {
-                    "language": "json"
-                    }
-                }
-                },
-                "url": {
-                "raw": "{{baseUrl}}/api/v1/books",
-                "host": [
-                    "{{baseUrl}}"
-                ],
-                "path": [
-                    "api",
-                    "v1",
-                    "books"
-                ]
-                },
-                "description": "Crea un nuevo libro. Ajusta title y categoria según necesites. Devuelve el libro creado."
+              }
             },
-            "response": []
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"]
+            },
+            "description": "Crea un nuevo libro. Ajusta title y categoria según necesites. Devuelve el libro creado."
+          },
+          "response": []
         },
         {
-            "name": "Update Book (PATCH)",
-            "request": {
-                "method": "PATCH",
-                "header": [
-                {
-                    "key": "Content-Type",
-                    "value": "application/json"
+          "name": "Update Book (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"El Quijote - Edición Revisada\"\n}",
+              "options": {
+                "raw": {
+                "language": "json"
                 }
-                ],
-                "body": {
-                "mode": "raw",
-                "raw": "{\n  \"title\": \"El Quijote - Edición Revisada\"\n}",
-                "options": {
-                    "raw": {
-                    "language": "json"
-                    }
-                }
-                },
-                "url": {
-                "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
-                "host": [
-                    "{{baseUrl}}"
-                ],
-                "path": [
-                    "api",
-                    "v1",
-                    "books",
-                    "{{bookId}}"
-                ]
-                },
-                "description": "Actualiza campos del libro. Solo envía los campos que quieras modificar."
+              }
             },
-            "response": []
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "{{bookId}}"]
+            },
+            "description": "Actualiza campos del libro. Solo envía los campos que quieras modificar."
+          },
+          "response": []
         },
         {
-            "name": "Delete Book",
-            "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
-                "host": [
-                    "{{baseUrl}}"
-                ],
-                "path": [
-                    "api",
-                    "v1",
-                    "books",
-                    "{{bookId}}"
-                ]
-                },
-                "description": "Elimina el libro indicado por {{bookId}}"
+          "name": "Delete Book",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "{{bookId}}"]
             },
-            "response": []
+            "description": "Elimina el libro indicado por {{bookId}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Loans",
+      "item": [
+        {
+          "name": "Get All Loans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/loans",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "loans"]
+            },
+            "description": "Obtiene la lista completa de préstamos"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Loan by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/loans/{{loanId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "loans", "{{loanId}}"]
+            },
+            "description": "Obtiene un préstamo específico por su ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Loans by User ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/loans/user/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "loans", "user", "{{userId}}"]
+            },
+            "description": "Obtiene los préstamos asociados a un usuario específico por su ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Loans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/loans/active",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "loans", "active"]
+            },
+            "description": "Obtiene la lista de préstamos actualmente activos (no devueltos)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Returned Loans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/loans/returned",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "loans", "returned"]
+            },
+            "description": "Obtiene la lista de préstamos ya devueltos."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Loan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[1, 2, 16, 18]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/loans/user/{{userId}}/loan",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "loans", "user", "{{userId}}", "loan"]
+            },
+            "description": "Crea un nuevo préstamo para un usuario con una lista de IDs de libros."
+          },
+          "response": []
+        },
+        {
+          "name": "Return Loan (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/loans/{{loanId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "loans", "{{loanId}}"]
+            },
+            "description": "Marca un préstamo como devuelto (actualiza la fecha de devolución)."
+          },
+          "response": []
         }
       ]
     }
@@ -442,6 +457,11 @@
     {
       "key": "searchTerm",
       "value": "Quijote"
+    },
+    {
+      "key": "loanId",
+      "value": "1",
+      "type": "string"
     }
   ]
 }

@@ -3,6 +3,7 @@ package webprog2.sistemaprestamobibliotecaapp.service;
 import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import webprog2.sistemaprestamobibliotecaapp.data.User;
 import webprog2.sistemaprestamobibliotecaapp.repository.UserRepository;
 
@@ -54,6 +55,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public User updateUserFields(Long id, User updatedUser) {
         return userRepository.findById(id)
                 .map(existingUser -> {
