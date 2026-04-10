@@ -20,6 +20,10 @@ public interface BookRepository extends CrudRepository<Book, Long> {
      */
     List<Book> findBookByCategory(String type);
     /**
+     * Return the list of available books. If book doesn't exist, return empty list.
+     */
+    List<Book> findByAvailableTrue();
+    /**
      * Return the list of all books.
      */
     List<Book> findAll();
@@ -28,6 +32,9 @@ public interface BookRepository extends CrudRepository<Book, Long> {
      *  Estos métodos utilizan anotaciones de Spring Data JDBC para realizar operaciones de actualización
      *  en la base de datos.
     */
+    @Query("SELECT * FROM BOOK WHERE status = 'LOANED'")
+    Iterable<Book> findAllLoaned();
+
     // Recupera los libros asociados a un préstamo específico, la consulta une las tablas BOOK y LOAN_HISTORY.
     @Query("SELECT b.* FROM BOOK b JOIN LOAN_HISTORY lh ON b.id = lh.book_id WHERE lh.loan_id = :loanId")
     List<Book> findAllByLoanId(Long loanId);

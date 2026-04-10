@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/book")
 public class BookController {
 
     private final BookService bookService;
@@ -20,7 +20,7 @@ public class BookController {
     // Constructor injection of UserService
     public BookController(BookService bookService) { this.bookService = bookService; }
 
-    @GetMapping("/bookmenu")
+    @GetMapping("/menu")
     public String showBookMenu(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("user", user);
         // Add categories to the model for the dropdown
@@ -32,20 +32,20 @@ public class BookController {
     }
 
     // Implement for Search Book by Title
-    @GetMapping("/searchbook")
-    public String searchBooks(@RequestParam("query") String query,
+    @GetMapping("/search")
+    public String searchBooks(@RequestParam("title") String title,
                               Model model,
                               @AuthenticationPrincipal User user) {
         model.addAttribute("user", user);
-        if (query == null || query.trim().isEmpty()) {
-            return "redirect:/user/bookmenu";
+        if (title == null || title.trim().isEmpty()) {
+            return "redirect:/book/menu";
         }
-        List<Book> searchResults = bookService.searchBooksByTitle(query);
+        List<Book> searchResults = bookService.searchBooksByTitle(title);
 
         model.addAttribute("books", searchResults);
         model.addAttribute("categories", Book.Category.values());
         log.info("Books {} ", model.getAttribute("books"));
-        log.info("Search for title '{}' returned {} as results", query, searchResults);
+        log.info("Search for title '{}' returned {} as results", title, searchResults);
         return "bookmenu";
     }
 

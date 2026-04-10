@@ -18,7 +18,7 @@
         </div>
         <nav>
             <ul>
-                <li><a th:href="@{/user/bookmenu}"><i class="fas fa-book"></i> <span>Catálogo</span></a></li>
+                <li><a th:href="@{/book/menu}"><i class="fas fa-book"></i> <span>Catálogo</span></a></li>
                 <li><a th:href="@{/user/loan/loanhistory}"><i class="fas fa-history"></i> <span>Historial de Préstamo</span></a></li>
                 <li th:if="${user.type.name() == 'ADMIN'}"><a th:href="@{/admin}"><i class="fas fa-user-gear"></i> <span>Admin managing</span></a></li>
                 <li>

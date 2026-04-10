@@ -15,6 +15,7 @@ import webprog2.sistemaprestamobibliotecaapp.data.User;
 import webprog2.sistemaprestamobibliotecaapp.service.LoanService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -54,7 +55,7 @@ public class LoanController {
         } else {
             log.warn("Attempted to add unavailable book with ID {} to cart.", bookId);
         }
-        return "redirect:/user/bookmenu";
+        return "redirect:/book/menu";
     }
 
     @PostMapping("/remove-from-cart")
@@ -63,22 +64,26 @@ public class LoanController {
         if (loanService.removeBookFromCart(bookId, cart)) {
             log.info("Book with ID {} removed from cart.", bookId);
         }
-        return "redirect:/user/bookmenu";
+        return "redirect:/book/menu";
     }
 
     @PostMapping("/confirm")
     public String confirmLoan(@ModelAttribute("cart") List<Book> cart,
                               @AuthenticationPrincipal User user,
                               RedirectAttributes redirectAttributes) {
-        int bookCount = cart.size();
-        loanService.loanBookToUser(user, cart);
-        log.info("Loan confirmed for user {} with {} books.", user.getUserName(), bookCount);
+        List<Long> inCartBookIds = cart.stream()
+                .map(Book::getId)
+                .collect(Collectors.toList());
+        // Realizar el préstamo de los libros en el carrito para el usuario
+        loanService.loanBookToUser(user, inCartBookIds);
+
+        log.info("Loan confirmed for user {} with {} books.", user.getUserName(), cart.size());
         // Guardar mensaje de éxito antes de limpiar
         redirectAttributes.addFlashAttribute("successMessage",
-                "¡Préstamo confirmado exitosamente! Se prestaron " + bookCount + " libros.");
+                "¡Préstamo confirmado exitosamente! Se prestaron " + cart.size() + " libros.");
         // Limpiar carrito después del préstamo
         cart.clear();
-        return "redirect:/user/bookmenu";
+        return "redirect:/book/menu";
     }
 
     @PostMapping("/return")

@@ -49,15 +49,6 @@ public class BookService {
         return results;
     }
 
-    /**
-     * Get a list of books by their category.
-     * @param category the type to search for
-     * @return List of Books matching the category
-     */
-    public List<Book> getBooksByCategory(String category) { return bookRepository.findBookByCategory(category); }
-    /**
-     * @return List of all Books
-     */
     public List<Book> getAllBooks() {return bookRepository.findAll(); }
 
     public Optional<Book> getBookById(Long id) {
@@ -66,6 +57,13 @@ public class BookService {
         }
         return bookRepository.findById(id);
     }
+
+    public List<Book> getBooksByCategory(String category) { return bookRepository.findBookByCategory(category); }
+
+    public List<Book> getAvailableBooks() { return bookRepository.findByAvailableTrue(); }
+
+    public Iterable<Book> getLoanedBooks() { return bookRepository.findAllLoaned(); }
+
 
     public Book createBook(Book Book) { return bookRepository.save(Book); }
 

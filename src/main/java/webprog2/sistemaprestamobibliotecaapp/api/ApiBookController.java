@@ -7,7 +7,9 @@ import webprog2.sistemaprestamobibliotecaapp.data.Book;
 import webprog2.sistemaprestamobibliotecaapp.data.Book;
 import webprog2.sistemaprestamobibliotecaapp.service.BookService;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -25,8 +27,37 @@ public class ApiBookController {
         return bookOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{title}/search")
-    public ResponseEntity<Iterable<Book>> searchBooksByTitle(@PathVariable String title) {
+    @GetMapping("/categories")
+    public ResponseEntity<Iterable<String>> getAllCategories() {
+        Iterable<String> categories = Arrays.stream(Book.Category.values())
+                .map(Enum::toString)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping("/categories/{category}")
+    public ResponseEntity<Iterable<Book>> getBooksByCategory(@PathVariable String category) {
+        if (category == null || category.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        Iterable<Book> books = bookService.getBooksByCategory(category);
+        return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<Iterable<Book>> getAvailableBooks() {
+        Iterable<Book> books = bookService.getAvailableBooks();
+        return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/loaned")
+    public ResponseEntity<Iterable<Book>> getLoanedBooks() {
+        Iterable<Book> books = bookService.getLoanedBooks();
+        return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Iterable<Book>> searchBooksByTitle(@RequestParam String title) {
         if (title == null || title.trim().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }

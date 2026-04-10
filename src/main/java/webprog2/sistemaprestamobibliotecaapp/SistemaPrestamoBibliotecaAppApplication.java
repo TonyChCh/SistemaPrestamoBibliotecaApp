@@ -24,7 +24,7 @@ public class SistemaPrestamoBibliotecaAppApplication implements WebMvcConfigurer
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("home");
         registry.addViewController("/admin").setViewName("admin");
-        registry.addViewController("/user/bookmenu").setViewName("bookmenu");
+        registry.addViewController("/book/menu").setViewName("bookmenu");
     }
 
     @Override

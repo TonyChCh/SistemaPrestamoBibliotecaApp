@@ -143,6 +143,255 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Get All Books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books"
+              ]
+            },
+            "description": "Obtiene la lista completa de libros"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Book by Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "{{bookId}}"
+              ]
+            },
+            "description": "Obtiene un libro por su id (usa la variable {{bookId}})."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Book Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "categories"
+              ]
+            },
+            "description": "Obtiene la lista de categorías de libros."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Book By Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/categories/{{category}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "categories",
+                "{{category}}"
+              ]
+            },
+            "description": "Obtiene libros por categoría. Reemplaza {{category}} por la categoría deseada (ej: NOVEL, SCIENCE, HISTORY)."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Books By Title",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/search?title={{searchTerm}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "{{searchTerm}}",
+                  "description": "Término de búsqueda para el título del libro (puede ser parcial)"
+                }
+              ],
+              "description": "Busca libros por título usando un término de búsqueda (puede ser parcial). Reemplaza {{searchTerm}} por el término deseado."
+            },
+            "response": []
+          }
+        },
+        {
+          "name": "Get Available Books",
+          "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+              "raw": "{{baseUrl}}/api/v1/books/available",
+              "host": [
+                  "{{baseUrl}}"
+              ],
+              "path": [
+                  "api",
+                  "v1",
+                  "books",
+                  "available"
+              ]
+              },
+              "description": "Obtiene la lista de libros disponibles para préstamo."
+          },
+          "response": []
+        },
+        {
+            "name": "Get Loaned Books",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                "raw": "{{baseUrl}}/api/v1/books/loaned",
+                "host": [
+                    "{{baseUrl}}"
+                ],
+                "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "loaned"
+                ]
+                },
+                "description": "Obtiene la lista de libros actualmente prestados."
+            },
+            "response": []
+        },
+        {
+            "name": "Create Book",
+            "request": {
+                "method": "POST",
+                "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                }
+                ],
+                "body": {
+                "mode": "raw",
+                "raw": "{\n  \"title\": \"La Odisea\",\n  \"category\": \"NOVEL\"\n}",
+                "options": {
+                    "raw": {
+                    "language": "json"
+                    }
+                }
+                },
+                "url": {
+                "raw": "{{baseUrl}}/api/v1/books",
+                "host": [
+                    "{{baseUrl}}"
+                ],
+                "path": [
+                    "api",
+                    "v1",
+                    "books"
+                ]
+                },
+                "description": "Crea un nuevo libro. Ajusta title y categoria según necesites. Devuelve el libro creado."
+            },
+            "response": []
+        },
+        {
+            "name": "Update Book (PATCH)",
+            "request": {
+                "method": "PATCH",
+                "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                }
+                ],
+                "body": {
+                "mode": "raw",
+                "raw": "{\n  \"title\": \"El Quijote - Edición Revisada\"\n}",
+                "options": {
+                    "raw": {
+                    "language": "json"
+                    }
+                }
+                },
+                "url": {
+                "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+                "host": [
+                    "{{baseUrl}}"
+                ],
+                "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "{{bookId}}"
+                ]
+                },
+                "description": "Actualiza campos del libro. Solo envía los campos que quieras modificar."
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Book",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+                "host": [
+                    "{{baseUrl}}"
+                ],
+                "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "{{bookId}}"
+                ]
+                },
+                "description": "Elimina el libro indicado por {{bookId}}"
+            },
+            "response": []
+        }
+      ]
     }
   ],
   "event": [
@@ -179,8 +428,20 @@
       "value": "1"
     },
     {
-      "key": "taskId",
+      "key": "bookId",
       "value": "1"
+    },
+    {
+      "key": "category",
+      "value": "NOVEL"
+    },
+    {
+      "key": "title",
+      "value": "El Quijote"
+    },
+    {
+      "key": "searchTerm",
+      "value": "Quijote"
     }
   ]
 }

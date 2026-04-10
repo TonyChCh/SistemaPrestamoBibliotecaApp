@@ -99,27 +99,24 @@ public class LoanService {
      * Create a new loan for a user with the given list of books.
      * This method checks if the books are available before creating the loan.
      * @param user  the user to loan the books to
-     * @param cart the list of books to loan
+     * @param inCartBookIds the list of books to loan
      */
     @Transactional
-    public void loanBookToUser(User user, List<Book> cart) {
-        // Crear un nuevo préstamo para el usuario
+    public void loanBookToUser(User user, List<Long> inCartBookIds) {
+        // Create a new loan for the user
         Loan newLoan = new Loan();
         newLoan.setUserId(user.getId());
         // Save the loan to the repository
         // Validation of books availability is already done in the addBookToCart method
         Loan savedLoan = loanRepository.save(newLoan);
-        // Extraer el ID de los libros y pasamos una lista de IDs al servicio para verificar disponibilidad
-        List<Long> inCartBookIds = new ArrayList<>();
-        cart.forEach(book -> inCartBookIds.add(book.getId()));
         // Update the availability of the books
         int updatedCount = bookRepository.confirmLoanBooks(inCartBookIds);
-        // Si el número de libros actualizados no coincide con el tamaño del carrito,
-        // significa que uno o más libros ya no están disponibles
-        if (updatedCount != cart.size()) {
+        // If the number of updated books does not match the size of the cart,
+        // it means one or more books are no longer available
+        if (updatedCount != inCartBookIds.size()) {
             throw new RuntimeException("Uno o más libros ya no están disponibles.");
         }
-        // Insertar registros en historial de préstamos
+        // Register the loan history for each book in the loan
         for (Long bookId : inCartBookIds) {
             loanRepository.saveLoanHistory(savedLoan.getId(), bookId);
         }

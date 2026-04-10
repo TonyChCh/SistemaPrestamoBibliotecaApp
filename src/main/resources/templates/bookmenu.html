@@ -18,7 +18,7 @@
         </div>
         <nav>
             <ul>
-                <li><a th:href="@{/user/bookmenu}"><i class="fas fa-book"></i> <span>Catálogo</span></a></li>
+                <li><a th:href="@{/book/menu}"><i class="fas fa-book"></i> <span>Catálogo</span></a></li>
                 <li><a th:href="@{/user/loan/loanhistory}"><i class="fas fa-history"></i> <span>Historial de Préstamo</span></a></li>
                 <li th:if="${user.type.name() == 'ADMIN'}"><a th:href="@{/admin}"><i class="fas fa-user-gear"></i> <span>Admin managing</span></a></li>
                 <li>
@@ -40,11 +40,11 @@
             </div>
 
             <div class="search-container">
-                <form th:action="@{/user/searchbook}" method="get">
+                <form th:action="@{/book/search}" method="get">
                     <input type="text"
-                           name="query"
+                           name="title"
                            placeholder="Buscar libros por título"
-                           th:value="${param.query != null ? param.query[0] : ''}">
+                           th:value="${param.title != null ? param.title[0] : ''}">
                     <button type="submit">
                         <i class="fas fa-search"></i> Buscar
                     </button>
@@ -61,9 +61,9 @@
         <!-- CONTENIDO DEL CATÁLOGO -->
         <div class="catalog-container">
             <!-- Mensaje de bienvenida si hay búsqueda -->
-            <div th:if="${param.query != null}" class="welcome-message">
+            <div th:if="${param.title != null}" class="welcome-message">
                 <i class="fas fa-search"></i>
-                Resultados para: "<span th:text="${param.query[0]}"></span>"
+                Resultados para: "<span th:text="${param.title[0]}"></span>"
             </div>
             <!-- Iterar sobre las categorías de libros -->
             <div th:each="cat : ${categories}" class="category-section">
@@ -123,8 +123,8 @@
             <!-- Mensaje si no hay libros en absoluto -->
             <div th:if="${#lists.isEmpty(books)}" class="no-results">
                 <i class="fas fa-books"></i>
-                No hay libros <span th:text="${param.query == null} ?
-                'disponibles en la biblioteca' : 'que coincidan con la búsqueda'"></span>
+                <strong> No hay libros <span th:text="${param.title == null} ?
+                'disponibles en la biblioteca' : 'que coincidan con la búsqueda'"></span></strong>
             </div>
         </div>
     </div>
